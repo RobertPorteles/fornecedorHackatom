@@ -1,0 +1,110 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>Cadastrar Fornecedor</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <form [formGroup]="fornecedorForm" (ngSubmit)="onSubmit()">
+      <!-- Informações Básicas -->
+      <div class="form-section">
+        <h3>Informações Básicas</h3>
+        
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Nome</mat-label>
+          <input matInput formControlName="nome" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>CNPJ</mat-label>
+          <input matInput formControlName="cnpj" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Telefone</mat-label>
+          <input matInput formControlName="telefone" required>
+        </mat-form-field>
+      </div>
+
+      <!-- Endereço -->
+      <div class="form-section" formGroupName="endereco">
+        <h3>Endereço</h3>
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>CEP</mat-label>
+          <input matInput formControlName="cep" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Logradouro</mat-label>
+          <input matInput formControlName="logradouro" required>
+        </mat-form-field>
+
+        <div class="form-row">
+          <mat-form-field appearance="fill" class="half-width">
+            <mat-label>Número</mat-label>
+            <input matInput formControlName="numero" required>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="half-width">
+            <mat-label>Complemento</mat-label>
+            <input matInput formControlName="complemento">
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Bairro</mat-label>
+          <input matInput formControlName="bairro" required>
+        </mat-form-field>
+
+        <div class="form-row">
+          <mat-form-field appearance="fill" class="half-width">
+            <mat-label>Cidade</mat-label>
+            <input matInput formControlName="cidade" required>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill" class="half-width">
+            <mat-label>Estado</mat-label>
+            <input matInput formControlName="estado" required>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Contatos -->
+      <div class="form-section">
+        <h3>Contatos</h3>
+        
+        <mat-list>
+          <mat-list-item *ngFor="let contato of contatos.controls; let i = index">
+            <mat-form-field appearance="fill" class="contact-field">
+              <mat-label>Contato {{ i + 1 }}</mat-label>
+              <input matInput [formControl]="$any(contato)" required>
+            </mat-form-field>
+            <button mat-icon-button color="warn" type="button" (click)="removerContato(i)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </mat-list-item>
+        </mat-list>
+
+        <button mat-raised-button type="button" (click)="adicionarContato()">
+          <mat-icon>add</mat-icon>
+          Adicionar Contato
+        </button>
+      </div>
+
+      <!-- Messages -->
+      <div *ngIf="successMessage" class="success-message">
+        {{ successMessage }}
+      </div>
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+
+      <!-- Submit Button -->
+      <div class="form-actions">
+        <button mat-raised-button color="primary" type="submit" [disabled]="!fornecedorForm.valid">
+          Cadastrar Fornecedor
+        </button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

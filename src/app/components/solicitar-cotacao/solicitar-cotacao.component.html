@@ -1,0 +1,40 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>Solicitar Cotação</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <form [formGroup]="solicitacaoForm" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>ID da Cotação</mat-label>
+        <input matInput formControlName="cotacaoId" required>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Mensagem</mat-label>
+        <textarea 
+          matInput 
+          formControlName="mensagem" 
+          rows="5" 
+          placeholder="Digite sua mensagem de solicitação..."
+          required>
+        </textarea>
+      </mat-form-field>
+
+      <!-- Messages -->
+      <div *ngIf="successMessage" class="success-message">
+        {{ successMessage }}
+      </div>
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+
+      <!-- Submit Button -->
+      <div class="form-actions">
+        <button mat-raised-button color="primary" type="submit" [disabled]="!solicitacaoForm.valid">
+          Solicitar Cotação
+        </button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>
