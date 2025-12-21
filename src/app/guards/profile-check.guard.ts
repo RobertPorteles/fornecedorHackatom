@@ -31,12 +31,11 @@ export const profileCheckGuard: CanActivateFn = (route, state) => {
       }),
       catchError((error) => {
         if (error.status === 404) {
-          // Perfil não cadastrado, redirecionar para cadastro
-          console.log('📋 Fornecedor não cadastrado, redirecionando para /fornecedor/cadastro');
-          router.navigate(['/fornecedor/cadastro']);
-          return of(false);
+          // Perfil não cadastrado, permitir acesso
+          console.log('📋 Fornecedor não cadastrado');
+          return of(true);
         }
-        // Outro erro, permitir acesso (ou poderia redirecionar para erro)
+        // Outro erro, permitir acesso
         return of(true);
       })
     );
