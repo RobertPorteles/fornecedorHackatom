@@ -23,7 +23,7 @@ export class FornecedorService {
 
   getFornecedorMe(): Observable<CadastroFornecedorResponse> {
     return this.http.get<CadastroFornecedorResponse>(
-      `${this.apiUrl}/api/v1/funcionario/me`
+      `${this.apiUrl}/api/v1/fornecedor/me`
     );
   }
 
@@ -35,22 +35,28 @@ export class FornecedorService {
 
   cadastrarFornecedor(request: CadastrarFornecedorRequest): Observable<CadastroFornecedorResponse> {
     return this.http.post<CadastroFornecedorResponse>(
-      `${this.apiUrl}/api/v1/funcionario/cadastrar`,
+      `${this.apiUrl}/api/v1/fornecedor/cadastrar`,
       request
     );
   }
 
   solicitarCotacao(cotacaoId: string, request: SolicitarCotacaoRequest): Observable<SolicitarCotacaoResponse> {
     return this.http.post<SolicitarCotacaoResponse>(
-      `${this.apiUrl}/api/v1/funcionario/solicitar/cotacao/${cotacaoId}`,
+      `${this.apiUrl}/api/v1/fornecedor/solicitar/cotacao/${cotacaoId}`,
       request
     );
   }
 
   negociarCotacao(cotacaoId: string, request: NegociarCotacaoRequest): Observable<NegociarSolicitacaoResponse> {
     return this.http.post<NegociarSolicitacaoResponse>(
-      `${this.apiUrl}/api/v1/funcionario/negociar/cotacao/${cotacaoId}`,
+      `${this.apiUrl}/api/v1/fornecedor/negociar/cotacao/${cotacaoId}`,
       request
+    );
+  }
+
+  listarFornecedores(): Observable<any> {
+    return this.http.get<any>(
+      `${this.apiUrl}/api/v1/fornecedor/listar`
     );
   }
 }

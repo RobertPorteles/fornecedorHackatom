@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { FornecedorService } from '../../services/fornecedor.service';
 import { CadastrarFornecedorRequest } from '../../models/requests.model';
+import { CadastroFornecedorResponse } from '../../models/responses.model';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -12,6 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-cadastrar-fornecedor',
@@ -31,20 +33,24 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   templateUrl: './cadastrar-fornecedor.component.html',
   styleUrls: ['./cadastrar-fornecedor.component.css']
 })
-export class CadastrarFornecedorComponent {
+export class CadastrarFornecedorComponent implements OnInit {
   fornecedorForm: FormGroup;
   isLoading = false;
+  buscandoCep = false;
+  fornecedorExistente = false;
+  cadastroResponse: CadastroFornecedorResponse | null = null;
 
   constructor(
     private fb: FormBuilder,
     private fornecedorService: FornecedorService,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private http: HttpClient
   ) {
     this.fornecedorForm = this.fb.group({
       nome: ['', [Validators.required, Validators.minLength(3)]],
-      cnpj: ['', [Validators.required]],
-      telefone: ['', [Validators.required]],
+      cnpj: ['', [Validators.required, this.validarCNPJ]],
+      telefone: ['', [Validators.required, this.validarTelefone]],
       endereco: this.fb.group({
         logradouro: ['', Validators.required],
         numero: ['', Validators.required],
@@ -52,13 +58,121 @@ export class CadastrarFornecedorComponent {
         bairro: ['', Validators.required],
         cidade: ['', Validators.required],
         estado: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(2)]],
-        cep: ['', [Validators.required]]
+        cep: ['', [Validators.required, this.validarCEP]]
       }),
       contatos: this.fb.array([], Validators.required)
     });
     
     // Adicionar pelo menos um contato por padrão
     this.adicionarContato();
+  }
+
+  ngOnInit(): void {
+    this.carregarDadosExistentes();
+  }
+
+  // Validador de CNPJ (14 dígitos)
+  validarCNPJ(control: AbstractControl): ValidationErrors | null {
+    if (!control.value) return null;
+    const cnpj = control.value.replace(/\D/g, '');
+    if (cnpj.length !== 14) {
+      return { cnpjInvalido: true };
+    }
+    return null;
+  }
+
+  // Validador de Telefone (formato brasileiro)
+  validarTelefone(control: AbstractControl): ValidationErrors | null {
+    if (!control.value) return null;
+    const telefone = control.value.replace(/\D/g, '');
+    if (telefone.length < 10 || telefone.length > 11) {
+      return { telefoneInvalido: true };
+    }
+    return null;
+  }
+
+  // Validador de CEP (8 dígitos)
+  validarCEP(control: AbstractControl): ValidationErrors | null {
+    if (!control.value) return null;
+    const cep = control.value.replace(/\D/g, '');
+    if (cep.length !== 8) {
+      return { cepInvalido: true };
+    }
+    return null;
+  }
+
+  // Buscar CEP via ViaCEP
+  buscarCep(): void {
+    const cepControl = this.fornecedorForm.get('endereco')?.get('cep');
+    if (!cepControl || cepControl.invalid) return;
+
+    const cep = cepControl.value.replace(/\D/g, '');
+    if (cep.length !== 8) return;
+
+    this.buscandoCep = true;
+    this.http.get(`https://viacep.com.br/ws/${cep}/json/`).subscribe({
+      next: (dados: any) => {
+        this.buscandoCep = false;
+        if (dados.erro) {
+          this.snackBar.open('CEP não encontrado', 'Fechar', { duration: 3000 });
+          return;
+        }
+
+        // Preencher campos de endereço
+        const enderecoGroup = this.fornecedorForm.get('endereco');
+        enderecoGroup?.patchValue({
+          logradouro: dados.logradouro,
+          bairro: dados.bairro,
+          cidade: dados.localidade,
+          estado: dados.uf,
+          complemento: dados.complemento
+        });
+
+        this.snackBar.open('Endereço preenchido automaticamente', 'Fechar', { duration: 2000 });
+      },
+      error: (error) => {
+        this.buscandoCep = false;
+        console.error('Erro ao buscar CEP:', error);
+        this.snackBar.open('Erro ao buscar CEP. Preencha manualmente.', 'Fechar', { duration: 3000 });
+      }
+    });
+  }
+
+  // Carregar dados existentes do fornecedor
+  carregarDadosExistentes(): void {
+    this.fornecedorService.getFornecedorMe().subscribe({
+      next: (response) => {
+        console.log('✅ Fornecedor já cadastrado:', response);
+        this.fornecedorExistente = true;
+        this.cadastroResponse = response;
+        
+        // Popular formulário com dados existentes
+        this.fornecedorForm.patchValue({
+          nome: response.nome,
+          cnpj: response.cnpj,
+          telefone: response.telefone,
+          endereco: response.endereco
+        });
+
+        // Popular contatos
+        this.contatos.clear();
+        response.contatos.forEach(contato => {
+          this.contatos.push(this.fb.control(contato, [Validators.required, Validators.email]));
+        });
+
+        this.snackBar.open('Dados do fornecedor carregados com sucesso', 'Fechar', {
+          duration: 3000,
+          panelClass: ['success-snackbar']
+        });
+      },
+      error: (error) => {
+        if (error.status === 404) {
+          console.log('ℹ️ Fornecedor ainda não cadastrado');
+        } else {
+          console.error('❌ Erro ao buscar dados:', error);
+        }
+      }
+    });
   }
 
   get contatos(): FormArray {
@@ -96,21 +210,26 @@ export class CadastrarFornecedorComponent {
       this.fornecedorService.cadastrarFornecedor(request).subscribe({
         next: (response) => {
           this.isLoading = false;
+          this.cadastroResponse = response;
           console.log('✅ Fornecedor cadastrado com sucesso:', response);
-          this.snackBar.open(`Fornecedor "${response.nome}" cadastrado com sucesso!`, 'Fechar', {
-            duration: 5000,
-            horizontalPosition: 'end',
-            verticalPosition: 'top',
-            panelClass: ['success-snackbar']
-          });
-          this.fornecedorForm.reset();
-          this.contatos.clear();
-          this.adicionarContato();
+          this.snackBar.open(
+            `Fornecedor cadastrado com sucesso! ID: ${response.id}`,
+            'Fechar',
+            {
+              duration: 5000,
+              horizontalPosition: 'end',
+              verticalPosition: 'top',
+              panelClass: ['success-snackbar']
+            }
+          );
+          
+          // Marcar como existente e popular dados somente leitura
+          this.fornecedorExistente = true;
           
           // Redirecionar para dashboard após sucesso
           setTimeout(() => {
             this.router.navigate(['/fornecedor/dashboard']);
-          }, 1500);
+          }, 2000);
         },
         error: (error) => {
           this.isLoading = false;
@@ -188,6 +307,15 @@ export class CadastrarFornecedorComponent {
     }
     if (control?.hasError('maxlength')) {
       return `Máximo de ${control.errors?.['maxlength'].requiredLength} caracteres`;
+    }
+    if (control?.hasError('cnpjInvalido')) {
+      return 'CNPJ deve ter 14 dígitos';
+    }
+    if (control?.hasError('telefoneInvalido')) {
+      return 'Telefone inválido (10-11 dígitos)';
+    }
+    if (control?.hasError('cepInvalido')) {
+      return 'CEP deve ter 8 dígitos';
     }
     return '';
   }

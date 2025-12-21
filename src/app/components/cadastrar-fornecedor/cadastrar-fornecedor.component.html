@@ -1,11 +1,33 @@
 <mat-card>
   <mat-card-header>
     <mat-icon mat-card-avatar>store</mat-icon>
-    <mat-card-title>Cadastrar Fornecedor</mat-card-title>
-    <mat-card-subtitle>Preencha os dados do fornecedor</mat-card-subtitle>
+    <mat-card-title>{{ fornecedorExistente ? 'Dados do Fornecedor' : 'Cadastrar Fornecedor' }}</mat-card-title>
+    <mat-card-subtitle>{{ fornecedorExistente ? 'Visualize e edite suas informações' : 'Preencha os dados do fornecedor' }}</mat-card-subtitle>
   </mat-card-header>
 
   <mat-card-content>
+    <!-- Dados Somente Leitura (se fornecedor existente) -->
+    <div *ngIf="fornecedorExistente && cadastroResponse" class="readonly-section">
+      <h3>Dados Cadastrados</h3>
+      <div class="info-grid">
+        <div class="info-item">
+          <strong>ID:</strong> {{ cadastroResponse.id }}
+        </div>
+        <div class="info-item">
+          <strong>Usuário ID:</strong> {{ cadastroResponse.usuarioId }}
+        </div>
+        <div class="info-item">
+          <strong>Nome:</strong> {{ cadastroResponse.nome }}
+        </div>
+        <div class="info-item">
+          <strong>CNPJ:</strong> {{ cadastroResponse.cnpj }}
+        </div>
+        <div class="info-item">
+          <strong>Telefone:</strong> {{ cadastroResponse.telefone }}
+        </div>
+      </div>
+    </div>
+
     <form [formGroup]="fornecedorForm" (ngSubmit)="onSubmit()">
       <!-- Informações Básicas -->
       <div class="form-section">
@@ -46,12 +68,15 @@
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>CEP</mat-label>
-          <input matInput formControlName="cep" placeholder="00000-000">
+          <input matInput formControlName="cep" placeholder="00000-000" (blur)="buscarCep()">
           <mat-icon matPrefix>location_on</mat-icon>
+          <button *ngIf="buscandoCep" mat-icon-button matSuffix disabled>
+            <mat-spinner diameter="20"></mat-spinner>
+          </button>
           <mat-error *ngIf="fornecedorForm.get('endereco')?.get('cep')?.invalid">
             {{ getErrorMessage('cep', 'endereco') }}
           </mat-error>
-          <mat-hint>Formato: 00000-000</mat-hint>
+          <mat-hint>Formato: 00000-000 (Digite e pressione Tab para buscar)</mat-hint>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">

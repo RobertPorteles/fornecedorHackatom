@@ -4,6 +4,40 @@ mat-card {
   padding: 20px;
 }
 
+.readonly-section {
+  margin-bottom: 30px;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.readonly-section h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #3f51b5;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.info-item {
+  padding: 10px;
+  background-color: white;
+  border-radius: 4px;
+  border: 1px solid #e0e0e0;
+}
+
+.info-item strong {
+  color: #555;
+  display: block;
+  margin-bottom: 5px;
+  font-size: 0.9em;
+}
+
 .form-section {
   margin-bottom: 30px;
 }
@@ -28,9 +62,19 @@ mat-card {
   flex: 1;
 }
 
+.contatos-list {
+  margin-bottom: 15px;
+}
+
+.contato-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
 .contact-field {
   flex: 1;
-  margin-right: 10px;
 }
 
 mat-list-item {
@@ -42,6 +86,10 @@ mat-list-item {
 .form-actions {
   margin-top: 20px;
   text-align: center;
+}
+
+.submit-button {
+  min-width: 200px;
 }
 
 .success-message {

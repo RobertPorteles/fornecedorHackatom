@@ -1,0 +1,136 @@
+<div class="lista-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-icon mat-card-avatar>people</mat-icon>
+      <mat-card-title>Lista de Fornecedores</mat-card-title>
+      <mat-card-subtitle>{{ fornecedoresFiltrados.length }} fornecedor(es) encontrado(s)</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <!-- Filtro de Busca -->
+      <div class="filtro-section">
+        <mat-form-field appearance="outline" class="filtro-field">
+          <mat-label>Buscar fornecedor</mat-label>
+          <input 
+            matInput 
+            [(ngModel)]="filtro" 
+            (input)="aplicarFiltro()" 
+            placeholder="Nome, CNPJ, telefone, cidade..."
+            autocomplete="off">
+          <mat-icon matPrefix>search</mat-icon>
+          <button 
+            *ngIf="filtro" 
+            mat-icon-button 
+            matSuffix 
+            (click)="limparFiltro()" 
+            matTooltip="Limpar filtro">
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-form-field>
+        
+        <button 
+          mat-raised-button 
+          color="primary" 
+          (click)="carregarFornecedores()"
+          [disabled]="isLoading">
+          <mat-icon>refresh</mat-icon>
+          Atualizar
+        </button>
+      </div>
+
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="loading-container">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p>Carregando fornecedores...</p>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="!isLoading && fornecedores.length === 0" class="empty-state">
+        <mat-icon>inbox</mat-icon>
+        <h3>Nenhum fornecedor cadastrado</h3>
+        <p>Não há fornecedores cadastrados no sistema ainda.</p>
+      </div>
+
+      <!-- No Results -->
+      <div *ngIf="!isLoading && fornecedores.length > 0 && fornecedoresFiltrados.length === 0" class="empty-state">
+        <mat-icon>search_off</mat-icon>
+        <h3>Nenhum resultado encontrado</h3>
+        <p>Tente ajustar os termos de busca.</p>
+        <button mat-stroked-button (click)="limparFiltro()">Limpar filtro</button>
+      </div>
+
+      <!-- Tabela de Fornecedores -->
+      <div *ngIf="!isLoading && fornecedoresFiltrados.length > 0" class="table-container">
+        <table mat-table [dataSource]="fornecedoresFiltrados" class="fornecedores-table">
+          
+          <!-- Nome Column -->
+          <ng-container matColumnDef="nome">
+            <th mat-header-cell *matHeaderCellDef>Nome</th>
+            <td mat-cell *matCellDef="let fornecedor">
+              <div class="cell-content">
+                <mat-icon class="cell-icon">business</mat-icon>
+                <strong>{{ fornecedor.nome }}</strong>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- CNPJ Column -->
+          <ng-container matColumnDef="cnpj">
+            <th mat-header-cell *matHeaderCellDef>CNPJ</th>
+            <td mat-cell *matCellDef="let fornecedor">
+              {{ formatarCNPJ(fornecedor.cnpj) }}
+            </td>
+          </ng-container>
+
+          <!-- Telefone Column -->
+          <ng-container matColumnDef="telefone">
+            <th mat-header-cell *matHeaderCellDef>Telefone</th>
+            <td mat-cell *matCellDef="let fornecedor">
+              <div class="cell-content">
+                <mat-icon class="cell-icon-small">phone</mat-icon>
+                {{ formatarTelefone(fornecedor.telefone) }}
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Localização Column -->
+          <ng-container matColumnDef="localizacao">
+            <th mat-header-cell *matHeaderCellDef>Localização</th>
+            <td mat-cell *matCellDef="let fornecedor">
+              <div class="cell-content">
+                <mat-icon class="cell-icon-small">location_on</mat-icon>
+                {{ fornecedor.cidade }} - {{ fornecedor.estado }}
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Ações Column -->
+          <ng-container matColumnDef="acoes">
+            <th mat-header-cell *matHeaderCellDef>Ações</th>
+            <td mat-cell *matCellDef="let fornecedor">
+              <div class="acoes-buttons">
+                <button 
+                  mat-icon-button 
+                  color="primary" 
+                  (click)="verDetalhes(fornecedor)"
+                  matTooltip="Ver detalhes">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+                <button 
+                  mat-icon-button 
+                  color="accent" 
+                  (click)="editar(fornecedor)"
+                  matTooltip="Editar">
+                  <mat-icon>edit</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row"></tr>
+        </table>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

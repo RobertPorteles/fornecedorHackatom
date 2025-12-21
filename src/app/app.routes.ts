@@ -8,6 +8,7 @@ import { NegociarCotacaoComponent } from './components/negociar-cotacao/negociar
 import { CotacaoInputComponent } from './components/cotacao-input/cotacao-input.component';
 import { FornecedorDashboardComponent } from './components/fornecedor/fornecedor-dashboard/fornecedor-dashboard.component';
 import { EmpresaDashboardComponent } from './components/empresa/empresa-dashboard/empresa-dashboard.component';
+import { ListaFornecedoresComponent } from './components/empresa/lista-fornecedores/lista-fornecedores.component';
 import { CotacaoListComponent } from './components/fornecedor/cotacao-list/cotacao-list.component';
 import { CotacaoDetailComponent } from './components/fornecedor/cotacao-detail/cotacao-detail.component';
 import { authGuard } from './guards/auth.guard';
@@ -73,6 +74,12 @@ export const routes: Routes = [
   { 
     path: 'empresa/dashboard', 
     component: EmpresaDashboardComponent,
+    canActivate: [authGuard, roleGuard, profileCheckGuard],
+    data: { roles: [Perfil.EMPRESA] }
+  },
+  { 
+    path: 'empresa/fornecedores', 
+    component: ListaFornecedoresComponent,
     canActivate: [authGuard, roleGuard, profileCheckGuard],
     data: { roles: [Perfil.EMPRESA] }
   },
