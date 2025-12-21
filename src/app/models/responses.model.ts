@@ -8,14 +8,15 @@ export interface CadastroFornecedorResponse {
   endereco: {
     logradouro: string;
     numero: string;
-    complemento?: string;
+    complemento: string;
     bairro: string;
     cidade: string;
     estado: string;
     cep: string;
   };
   contatos: string[];
-  usuarioId?: string;
+  cotacoes: any[];
+  usuarioId: string;
 }
 
 export interface SolicitarCotacaoResponse {

@@ -21,6 +21,18 @@ export class FornecedorService {
 
   constructor(private http: HttpClient) {}
 
+  getFornecedorMe(): Observable<CadastroFornecedorResponse> {
+    return this.http.get<CadastroFornecedorResponse>(
+      `${this.apiUrl}/api/v1/funcionario/me`
+    );
+  }
+
+  getEmpresaMe(): Observable<any> {
+    return this.http.get<any>(
+      `${this.apiUrl}/api/v1/empresa/me`
+    );
+  }
+
   cadastrarFornecedor(request: CadastrarFornecedorRequest): Observable<CadastroFornecedorResponse> {
     return this.http.post<CadastroFornecedorResponse>(
       `${this.apiUrl}/api/v1/funcionario/cadastrar`,

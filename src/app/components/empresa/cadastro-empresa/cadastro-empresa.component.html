@@ -1,0 +1,134 @@
+<div class="cadastro-container">
+  <mat-card class="cadastro-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar>business</mat-icon>
+      <mat-card-title>Cadastro da Empresa</mat-card-title>
+      <mat-card-subtitle>Complete o cadastro da sua empresa</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="empresaForm" (ngSubmit)="onSubmit()">
+        <!-- Informações Básicas -->
+        <div class="form-section">
+          <h3>Informações da Empresa</h3>
+          
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Razão Social</mat-label>
+            <input matInput formControlName="razaoSocial" placeholder="Ex: Empresa XYZ Ltda">
+            <mat-icon matPrefix>business</mat-icon>
+            <mat-error *ngIf="empresaForm.get('razaoSocial')?.invalid">
+              {{ getErrorMessage('razaoSocial') }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>CNPJ</mat-label>
+            <input matInput formControlName="cnpj" placeholder="00.000.000/0000-00">
+            <mat-icon matPrefix>badge</mat-icon>
+            <mat-error *ngIf="empresaForm.get('cnpj')?.invalid">
+              {{ getErrorMessage('cnpj') }}
+            </mat-error>
+            <mat-hint>Formato: 00.000.000/0000-00</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" formControlName="email" placeholder="contato@empresa.com">
+            <mat-icon matPrefix>email</mat-icon>
+            <mat-error *ngIf="empresaForm.get('email')?.invalid">
+              {{ getErrorMessage('email') }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Telefone</mat-label>
+            <input matInput formControlName="telefone" placeholder="(00) 00000-0000">
+            <mat-icon matPrefix>phone</mat-icon>
+            <mat-error *ngIf="empresaForm.get('telefone')?.invalid">
+              {{ getErrorMessage('telefone') }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Endereço -->
+        <div class="form-section" formGroupName="endereco">
+          <h3>Endereço</h3>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>CEP</mat-label>
+            <input matInput formControlName="cep" placeholder="00000-000">
+            <mat-icon matPrefix>location_on</mat-icon>
+            <mat-error *ngIf="empresaForm.get('endereco')?.get('cep')?.invalid">
+              {{ getErrorMessage('cep', 'endereco') }}
+            </mat-error>
+            <mat-hint>Formato: 00000-000</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Logradouro</mat-label>
+            <input matInput formControlName="logradouro" placeholder="Rua, Avenida, etc.">
+            <mat-error *ngIf="empresaForm.get('endereco')?.get('logradouro')?.invalid">
+              {{ getErrorMessage('logradouro', 'endereco') }}
+            </mat-error>
+          </mat-form-field>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Número</mat-label>
+              <input matInput formControlName="numero" placeholder="123">
+              <mat-error *ngIf="empresaForm.get('endereco')?.get('numero')?.invalid">
+                {{ getErrorMessage('numero', 'endereco') }}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Complemento</mat-label>
+              <input matInput formControlName="complemento" placeholder="Sala, Andar (opcional)">
+            </mat-form-field>
+          </div>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Bairro</mat-label>
+            <input matInput formControlName="bairro" placeholder="Nome do bairro">
+            <mat-error *ngIf="empresaForm.get('endereco')?.get('bairro')?.invalid">
+              {{ getErrorMessage('bairro', 'endereco') }}
+            </mat-error>
+          </mat-form-field>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Cidade</mat-label>
+              <input matInput formControlName="cidade" placeholder="Nome da cidade">
+              <mat-error *ngIf="empresaForm.get('endereco')?.get('cidade')?.invalid">
+                {{ getErrorMessage('cidade', 'endereco') }}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Estado (UF)</mat-label>
+              <input matInput formControlName="estado" placeholder="SP" maxlength="2">
+              <mat-error *ngIf="empresaForm.get('endereco')?.get('estado')?.invalid">
+                {{ getErrorMessage('estado', 'endereco') }}
+              </mat-error>
+              <mat-hint>2 letras</mat-hint>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="form-actions">
+          <button 
+            mat-raised-button 
+            color="primary" 
+            type="submit" 
+            [disabled]="!empresaForm.valid || isLoading"
+            class="submit-button">
+            <mat-icon *ngIf="!isLoading">save</mat-icon>
+            <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+            {{ isLoading ? 'Cadastrando...' : 'Cadastrar Empresa' }}
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -1,0 +1,121 @@
+.cotacoes-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header-card {
+  margin-bottom: 30px;
+}
+
+.header-card mat-card-header mat-icon {
+  font-size: 40px;
+  width: 40px;
+  height: 40px;
+}
+
+.loading-container,
+.error-container,
+.empty-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.loading-container mat-spinner {
+  margin-bottom: 20px;
+}
+
+.error-container mat-icon,
+.empty-container mat-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 16px;
+  opacity: 0.6;
+}
+
+.error-container p,
+.empty-container p {
+  font-size: 18px;
+  color: rgba(0, 0, 0, 0.6);
+  margin-bottom: 20px;
+}
+
+.cotacoes-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+}
+
+.cotacao-card {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.cotacao-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.cotacao-card mat-card-header mat-icon {
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+  color: #3f51b5;
+}
+
+.cotacao-card mat-card-subtitle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.subtitle-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+.descricao {
+  margin: 12px 0;
+  color: rgba(0, 0, 0, 0.7);
+  line-height: 1.5;
+}
+
+.cotacao-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.info-item mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+mat-card-actions {
+  padding: 16px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+mat-card-actions button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

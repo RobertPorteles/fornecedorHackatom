@@ -1,0 +1,180 @@
+<div class="detail-container">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Carregando cotação...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !isLoading" class="error-container">
+    <mat-icon color="warn">error_outline</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" (click)="voltar()">
+      <mat-icon>arrow_back</mat-icon>
+      Voltar
+    </button>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="!isLoading && !error && cotacao" class="content">
+    <!-- Header Card -->
+    <mat-card class="header-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>description</mat-icon>
+        <mat-card-title>{{ cotacao.nome }}</mat-card-title>
+        <mat-card-subtitle *ngIf="cotacao.empresa">
+          <mat-icon class="subtitle-icon">business</mat-icon>
+          {{ cotacao.empresa.razaoSocial }}
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="status-section">
+          <mat-chip [color]="getStatusColor()" selected>
+            {{ getStatusLabel() }}
+          </mat-chip>
+          <mat-chip *ngIf="cotacao.status" color="primary" selected>
+            {{ cotacao.status }}
+          </mat-chip>
+        </div>
+
+        <mat-divider class="divider"></mat-divider>
+
+        <div class="info-section">
+          <h3>Descrição</h3>
+          <p *ngIf="cotacao.descricao">{{ cotacao.descricao }}</p>
+          <p *ngIf="!cotacao.descricao" class="no-info">Sem descrição disponível.</p>
+        </div>
+
+        <div *ngIf="cotacao.dataCriacao" class="info-section">
+          <h3>Data de Criação</h3>
+          <p>
+            <mat-icon>calendar_today</mat-icon>
+            {{ cotacao.dataCriacao | date: 'dd/MM/yyyy HH:mm' }}
+          </p>
+        </div>
+
+        <div *ngIf="cotacao.fornecedores && cotacao.fornecedores.length > 0" class="info-section">
+          <h3>Fornecedores Participantes ({{ cotacao.fornecedores.length }})</h3>
+          <div class="fornecedores-chips">
+            <mat-chip *ngFor="let fornecedor of cotacao.fornecedores">
+              {{ fornecedor.nome }}
+            </mat-chip>
+          </div>
+        </div>
+      </mat-card-content>
+
+      <mat-card-actions>
+        <button mat-button (click)="voltar()">
+          <mat-icon>arrow_back</mat-icon>
+          Voltar
+        </button>
+      </mat-card-actions>
+    </mat-card>
+
+    <!-- Formulário de Proposta (apenas se NÃO estiver participando) -->
+    <mat-card *ngIf="statusParticipacao === 'nao-participando'" class="proposta-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>send</mat-icon>
+        <mat-card-title>Enviar Primeira Proposta</mat-card-title>
+        <mat-card-subtitle>Demonstre interesse nesta cotação</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <form [formGroup]="propostaForm" (ngSubmit)="enviarProposta()">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Texto da Proposta</mat-label>
+            <textarea 
+              matInput 
+              formControlName="texto" 
+              rows="6"
+              placeholder="Descreva sua proposta inicial, incluindo condições, prazos e valores estimados..."></textarea>
+            <mat-hint>Mínimo de 10 caracteres</mat-hint>
+            <mat-error *ngIf="propostaForm.get('texto')?.hasError('required')">
+              Campo obrigatório
+            </mat-error>
+            <mat-error *ngIf="propostaForm.get('texto')?.hasError('minlength')">
+              Mínimo de 10 caracteres
+            </mat-error>
+          </mat-form-field>
+
+          <div class="form-actions">
+            <button 
+              mat-raised-button 
+              color="primary" 
+              type="submit"
+              [disabled]="propostaForm.invalid || isSending">
+              <mat-icon *ngIf="!isSending">send</mat-icon>
+              <mat-spinner *ngIf="isSending" diameter="20"></mat-spinner>
+              {{ isSending ? 'Enviando...' : 'Enviar Primeira Proposta' }}
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Formulário de Negociação (apenas se estiver participando) -->
+    <mat-card *ngIf="statusParticipacao === 'em-negociacao'" class="negociacao-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>handshake</mat-icon>
+        <mat-card-title>Negociar Cotação</mat-card-title>
+        <mat-card-subtitle>Você já está participando desta cotação</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <form [formGroup]="negociacaoForm" (ngSubmit)="enviarNegociacao()">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Texto da Negociação</mat-label>
+            <textarea 
+              matInput 
+              formControlName="texto" 
+              rows="6"
+              placeholder="Envie uma nova proposta, contraoferta ou informação adicional..."></textarea>
+            <mat-hint>Mínimo de 10 caracteres</mat-hint>
+            <mat-error *ngIf="negociacaoForm.get('texto')?.hasError('required')">
+              Campo obrigatório
+            </mat-error>
+            <mat-error *ngIf="negociacaoForm.get('texto')?.hasError('minlength')">
+              Mínimo de 10 caracteres
+            </mat-error>
+          </mat-form-field>
+
+          <div class="form-actions">
+            <button 
+              mat-raised-button 
+              color="primary" 
+              type="submit"
+              [disabled]="negociacaoForm.invalid || isSending">
+              <mat-icon *ngIf="!isSending">send</mat-icon>
+              <mat-spinner *ngIf="isSending" diameter="20"></mat-spinner>
+              {{ isSending ? 'Enviando...' : 'Enviar Negociação' }}
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Histórico de Propostas (se houver) -->
+    <mat-card *ngIf="showHistorico && historico.length > 0" class="historico-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>history</mat-icon>
+        <mat-card-title>Histórico de Negociações</mat-card-title>
+        <mat-card-subtitle>{{ historico.length }} mensagem(ns)</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="historico-list">
+          <div *ngFor="let item of historico; let i = index" class="historico-item">
+            <div class="historico-header">
+              <mat-icon>message</mat-icon>
+              <span class="historico-index">#{{ i + 1 }}</span>
+              <span *ngIf="item.data" class="historico-data">{{ item.data | date: 'dd/MM/yyyy HH:mm' }}</span>
+            </div>
+            <p class="historico-texto">{{ item.texto || item.mensagem }}</p>
+            <mat-divider *ngIf="i < historico.length - 1"></mat-divider>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
