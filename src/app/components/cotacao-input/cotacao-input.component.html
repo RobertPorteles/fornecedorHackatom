@@ -1,0 +1,75 @@
+<div class="input-container">
+  <mat-card class="cotacao-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar>search</mat-icon>
+      <mat-card-title>Buscar Cotação</mat-card-title>
+      <mat-card-subtitle>Insira o UUID da cotação para visualizar detalhes</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="cotacaoForm" (ngSubmit)="buscarCotacao()">
+        <div class="input-group">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>UUID da Cotação</mat-label>
+            <input 
+              matInput 
+              formControlName="uuid"
+              placeholder="550e8400-e29b-41d4-a716-446655440000"
+              autocomplete="off">
+            <mat-icon matPrefix>vpn_key</mat-icon>
+            <button 
+              mat-icon-button 
+              matSuffix 
+              type="button"
+              (click)="colarUUID()"
+              matTooltip="Colar da área de transferência">
+              <mat-icon>content_paste</mat-icon>
+            </button>
+            <mat-error *ngIf="cotacaoForm.get('uuid')?.invalid">
+              {{ getErrorMessage() }}
+            </mat-error>
+            <mat-hint>Cole ou digite o UUID da cotação</mat-hint>
+          </mat-form-field>
+
+          <button 
+            mat-raised-button 
+            color="primary" 
+            type="submit"
+            [disabled]="cotacaoForm.invalid"
+            class="search-button">
+            <mat-icon>search</mat-icon>
+            Buscar Cotação
+          </button>
+        </div>
+
+        <div class="info-section">
+          <mat-icon>info</mat-icon>
+          <div class="info-text">
+            <h3>Como funciona?</h3>
+            <ul>
+              <li>A empresa cria uma cotação e compartilha o UUID com você</li>
+              <li>Cole ou digite o UUID no campo acima</li>
+              <li>Clique em "Buscar Cotação" para ver os detalhes</li>
+              <li>Você poderá enviar propostas e negociar diretamente</li>
+            </ul>
+          </div>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="example-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar>lightbulb</mat-icon>
+      <mat-card-title>Exemplo de UUID</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <p>Um UUID válido tem o seguinte formato:</p>
+      <code class="uuid-example">550e8400-e29b-41d4-a716-446655440000</code>
+      <p class="format-hint">
+        <mat-icon>check_circle</mat-icon>
+        8 dígitos - 4 dígitos - 4 dígitos - 4 dígitos - 12 dígitos
+      </p>
+    </mat-card-content>
+  </mat-card>
+</div>

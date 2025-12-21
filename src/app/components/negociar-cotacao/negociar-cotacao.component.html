@@ -1,40 +1,56 @@
-<mat-card>
-  <mat-card-header>
-    <mat-card-title>Negociar Cotação</mat-card-title>
-  </mat-card-header>
+<div class="chat-container">
+  <mat-card class="chat-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar>chat</mat-icon>
+      <mat-card-title>Negociar Cotação</mat-card-title>
+      <mat-card-subtitle>ID: {{ cotacaoId }}</mat-card-subtitle>
+    </mat-card-header>
 
-  <mat-card-content>
-    <form [formGroup]="negociacaoForm" (ngSubmit)="onSubmit()">
-      <mat-form-field appearance="fill" class="full-width">
-        <mat-label>ID da Cotação</mat-label>
-        <input matInput formControlName="cotacaoId" required>
-      </mat-form-field>
+    <mat-card-content>
+      <!-- Chat Messages -->
+      <div class="chat-messages" #chatContainer>
+        <div *ngIf="mensagens.length === 0" class="empty-chat">
+          <mat-icon>forum</mat-icon>
+          <p>Nenhuma mensagem ainda. Inicie a negociação!</p>
+        </div>
 
-      <mat-form-field appearance="fill" class="full-width">
-        <mat-label>Mensagem de Negociação</mat-label>
-        <textarea 
-          matInput 
-          formControlName="mensagem" 
-          rows="5" 
-          placeholder="Digite sua proposta de negociação..."
-          required>
-        </textarea>
-      </mat-form-field>
-
-      <!-- Messages -->
-      <div *ngIf="successMessage" class="success-message">
-        {{ successMessage }}
-      </div>
-      <div *ngIf="errorMessage" class="error-message">
-        {{ errorMessage }}
+        <mat-list>
+          <mat-list-item *ngFor="let mensagem of mensagens" 
+                         [class.message-sent]="mensagem.tipo === 'enviada'"
+                         [class.message-received]="mensagem.tipo === 'recebida'">
+            <div class="message-bubble" [ngClass]="mensagem.tipo === 'enviada' ? 'sent' : 'received'">
+              <div class="message-content">{{ mensagem.texto }}</div>
+              <div class="message-time">{{ formatTime(mensagem.timestamp) }}</div>
+            </div>
+          </mat-list-item>
+        </mat-list>
       </div>
 
-      <!-- Submit Button -->
-      <div class="form-actions">
-        <button mat-raised-button color="primary" type="submit" [disabled]="!negociacaoForm.valid">
-          Enviar Negociação
+      <mat-divider></mat-divider>
+
+      <!-- Message Input -->
+      <form [formGroup]="negociacaoForm" (ngSubmit)="enviarMensagem()" class="message-input">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Digite sua mensagem</mat-label>
+          <textarea 
+            matInput 
+            formControlName="mensagem"
+            rows="3"
+            placeholder="Escreva sua proposta de negociação..."
+            (keydown.control.enter)="enviarMensagem()"></textarea>
+          <mat-hint>Mínimo 10 caracteres. Ctrl+Enter para enviar</mat-hint>
+        </mat-form-field>
+
+        <button 
+          mat-fab 
+          color="primary" 
+          type="submit"
+          [disabled]="negociacaoForm.invalid || isLoading"
+          class="send-button">
+          <mat-icon *ngIf="!isLoading">send</mat-icon>
+          <mat-spinner *ngIf="isLoading" diameter="24"></mat-spinner>
         </button>
-      </div>
-    </form>
-  </mat-card-content>
-</mat-card>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

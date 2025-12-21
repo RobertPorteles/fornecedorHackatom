@@ -1,33 +1,73 @@
-mat-card {
-  max-width: 600px;
-  margin: 20px auto;
+.cotacao-container {
   padding: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+mat-card {
+  padding: 20px;
+}
+
+mat-card-header {
+  margin-bottom: 30px;
+}
+
+mat-card-header mat-icon {
+  font-size: 40px;
+  width: 40px;
+  height: 40px;
+  color: #3f51b5;
+}
+
+.step-content {
+  padding: 20px 0;
+}
+
+.step-content h3 {
+  color: #3f51b5;
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 24px;
 }
 
 .full-width {
   width: 100%;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
-.form-actions {
+.step-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.step-actions button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 140px;
+}
+
+mat-spinner {
+  display: inline-block;
+}
+
+mat-icon[matPrefix] {
+  margin-right: 8px;
+  color: rgba(0, 0, 0, 0.54);
+}
+
+::ng-deep .mat-stepper-horizontal {
   margin-top: 20px;
-  text-align: center;
 }
 
-.success-message {
-  padding: 10px;
-  margin: 15px 0;
-  background-color: #d4edda;
-  border: 1px solid #c3e6cb;
-  border-radius: 4px;
-  color: #155724;
+::ng-deep .success-snackbar {
+  background-color: #4caf50 !important;
+  color: white !important;
 }
 
-.error-message {
-  padding: 10px;
-  margin: 15px 0;
-  background-color: #f8d7da;
-  border: 1px solid #f5c6cb;
-  border-radius: 4px;
-  color: #721c24;
+::ng-deep .error-snackbar {
+  background-color: #f44336 !important;
+  color: white !important;
 }

@@ -5,6 +5,7 @@ import { CadastrarFornecedorComponent } from './components/cadastrar-fornecedor/
 import { CadastroEmpresaComponent } from './components/empresa/cadastro-empresa/cadastro-empresa.component';
 import { SolicitarCotacaoComponent } from './components/solicitar-cotacao/solicitar-cotacao.component';
 import { NegociarCotacaoComponent } from './components/negociar-cotacao/negociar-cotacao.component';
+import { CotacaoInputComponent } from './components/cotacao-input/cotacao-input.component';
 import { FornecedorDashboardComponent } from './components/fornecedor/fornecedor-dashboard/fornecedor-dashboard.component';
 import { EmpresaDashboardComponent } from './components/empresa/empresa-dashboard/empresa-dashboard.component';
 import { CotacaoListComponent } from './components/fornecedor/cotacao-list/cotacao-list.component';
@@ -40,6 +41,12 @@ export const routes: Routes = [
   { 
     path: 'fornecedor/cotacao/:id', 
     component: CotacaoDetailComponent,
+    canActivate: [authGuard, roleGuard, profileCheckGuard],
+    data: { roles: [Perfil.FORNECEDOR] }
+  },
+  { 
+    path: 'fornecedor/buscar-cotacao', 
+    component: CotacaoInputComponent,
     canActivate: [authGuard, roleGuard, profileCheckGuard],
     data: { roles: [Perfil.FORNECEDOR] }
   },

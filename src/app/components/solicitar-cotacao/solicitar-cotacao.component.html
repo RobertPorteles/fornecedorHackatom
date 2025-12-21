@@ -1,40 +1,103 @@
-<mat-card>
-  <mat-card-header>
-    <mat-card-title>Solicitar Cotação</mat-card-title>
-  </mat-card-header>
+<div class="cotacao-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-icon mat-card-avatar>add_circle</mat-icon>
+      <mat-card-title>Criar Nova Cotação</mat-card-title>
+      <mat-card-subtitle>Preencha as informações para solicitar cotações</mat-card-subtitle>
+    </mat-card-header>
 
-  <mat-card-content>
-    <form [formGroup]="solicitacaoForm" (ngSubmit)="onSubmit()">
-      <mat-form-field appearance="fill" class="full-width">
-        <mat-label>ID da Cotação</mat-label>
-        <input matInput formControlName="cotacaoId" required>
-      </mat-form-field>
+    <mat-card-content>
+      <mat-stepper [linear]="true" #stepper>
+        <!-- Etapa 1: Informações da Cotação -->
+        <mat-step [stepControl]="informacoesForm">
+          <form [formGroup]="informacoesForm">
+            <ng-template matStepLabel>Informações da Cotação</ng-template>
+            
+            <div class="step-content">
+              <h3>Dados da Solicitação</h3>
 
-      <mat-form-field appearance="fill" class="full-width">
-        <mat-label>Mensagem</mat-label>
-        <textarea 
-          matInput 
-          formControlName="mensagem" 
-          rows="5" 
-          placeholder="Digite sua mensagem de solicitação..."
-          required>
-        </textarea>
-      </mat-form-field>
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Nome da Cotação</mat-label>
+                <input matInput formControlName="nome" placeholder="Ex: Fornecimento de Materiais Elétricos">
+                <mat-icon matPrefix>description</mat-icon>
+                <mat-error *ngIf="informacoesForm.get('nome')?.invalid">
+                  {{ getErrorMessage(informacoesForm, 'nome') }}
+                </mat-error>
+                <mat-hint>Mínimo de 5 caracteres</mat-hint>
+              </mat-form-field>
 
-      <!-- Messages -->
-      <div *ngIf="successMessage" class="success-message">
-        {{ successMessage }}
-      </div>
-      <div *ngIf="errorMessage" class="error-message">
-        {{ errorMessage }}
-      </div>
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Descrição Detalhada</mat-label>
+                <textarea 
+                  matInput 
+                  formControlName="descricao" 
+                  rows="6"
+                  placeholder="Descreva detalhadamente o que você precisa..."></textarea>
+                <mat-error *ngIf="informacoesForm.get('descricao')?.invalid">
+                  {{ getErrorMessage(informacoesForm, 'descricao') }}
+                </mat-error>
+                <mat-hint>Mínimo de 10 caracteres</mat-hint>
+              </mat-form-field>
 
-      <!-- Submit Button -->
-      <div class="form-actions">
-        <button mat-raised-button color="primary" type="submit" [disabled]="!solicitacaoForm.valid">
-          Solicitar Cotação
-        </button>
-      </div>
-    </form>
-  </mat-card-content>
-</mat-card>
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Prazo para Respostas</mat-label>
+                <input matInput type="date" formControlName="prazoResposta">
+                <mat-icon matPrefix>calendar_today</mat-icon>
+                <mat-error *ngIf="informacoesForm.get('prazoResposta')?.invalid">
+                  {{ getErrorMessage(informacoesForm, 'prazoResposta') }}
+                </mat-error>
+              </mat-form-field>
+
+              <div class="step-actions">
+                <button mat-raised-button color="primary" matStepperNext [disabled]="informacoesForm.invalid">
+                  Avançar
+                  <mat-icon>arrow_forward</mat-icon>
+                </button>
+              </div>
+            </div>
+          </form>
+        </mat-step>
+
+        <!-- Etapa 2: Detalhes Adicionais -->
+        <mat-step [stepControl]="propostaForm">
+          <form [formGroup]="propostaForm">
+            <ng-template matStepLabel>Detalhes Adicionais</ng-template>
+            
+            <div class="step-content">
+              <h3>Informações Complementares</h3>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Detalhes e Especificações</mat-label>
+                <textarea 
+                  matInput 
+                  formControlName="detalhes" 
+                  rows="8"
+                  placeholder="Adicione especificações técnicas, quantidades, condições de pagamento, prazos de entrega, etc..."></textarea>
+                <mat-error *ngIf="propostaForm.get('detalhes')?.invalid">
+                  {{ getErrorMessage(propostaForm, 'detalhes') }}
+                </mat-error>
+                <mat-hint>Mínimo de 10 caracteres</mat-hint>
+              </mat-form-field>
+
+              <div class="step-actions">
+                <button mat-button matStepperPrevious>
+                  <mat-icon>arrow_back</mat-icon>
+                  Voltar
+                </button>
+                <button 
+                  mat-raised-button 
+                  color="primary" 
+                  (click)="enviarCotacao()"
+                  [disabled]="propostaForm.invalid || isLoading">
+                  <mat-icon *ngIf="!isLoading">send</mat-icon>
+                  <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+                  {{ isLoading ? 'Enviando...' : 'Criar Cotação' }}
+                </button>
+              </div>
+            </div>
+          </form>
+        </mat-step>
+      </mat-stepper>
+    </mat-card-content>
+  </mat-card>
+</div>
