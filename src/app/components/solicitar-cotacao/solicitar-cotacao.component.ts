@@ -61,14 +61,17 @@ export class SolicitarCotacaoComponent {
     this.isLoading = true;
 
     const cotacaoData = {
+      id: this.generateId(),
+      status: 'ABERTA',
+      dataCreated: new Date().toISOString(),
       ...this.informacoesForm.value,
       ...this.propostaForm.value
     };
 
     console.log('📤 Criando cotação:', cotacaoData);
 
-    // TODO: Chamar serviço real quando backend estiver pronto
-    // this.cotacaoService.criarCotacao(cotacaoData).subscribe(...)
+    // Salvar no localStorage
+    this.salvarCotacaoLocalStorage(cotacaoData);
     
     // Simulação
     setTimeout(() => {
@@ -81,6 +84,21 @@ export class SolicitarCotacaoComponent {
       });
       this.router.navigate(['/empresa/dashboard']);
     }, 1500);
+  }
+
+  private salvarCotacaoLocalStorage(cotacao: any): void {
+    const cotacoes = this.getCotacoesLocalStorage();
+    cotacoes.push(cotacao);
+    localStorage.setItem('cotacoes', JSON.stringify(cotacoes));
+  }
+
+  private getCotacoesLocalStorage(): any[] {
+    const cotacoes = localStorage.getItem('cotacoes');
+    return cotacoes ? JSON.parse(cotacoes) : [];
+  }
+
+  private generateId(): string {
+    return Date.now().toString(36) + Math.random().toString(36).substr(2);
   }
 
   getErrorMessage(formGroup: FormGroup, fieldName: string): string {

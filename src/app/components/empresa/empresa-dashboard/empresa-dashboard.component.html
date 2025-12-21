@@ -13,8 +13,8 @@
         <p><strong>ID:</strong> {{ currentUser?.id }}</p>
       </div>
 
-      <div class="actions-grid">
-        <mat-card class="action-card">
+      <div class="actions-section">
+        <mat-card class="create-card">
           <mat-card-header>
             <mat-icon>add_circle</mat-icon>
             <mat-card-title>Criar Cotação</mat-card-title>
@@ -28,22 +28,59 @@
             </button>
           </mat-card-actions>
         </mat-card>
+      </div>
 
-        <mat-card class="action-card">
-          <mat-card-header>
-            <mat-icon>list_alt</mat-icon>
-            <mat-card-title>Minhas Cotações</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <p>Gerencie suas cotações em andamento</p>
-          </mat-card-content>
-          <mat-card-actions>
-            <button mat-raised-button color="primary">
-              Ver Cotações
-            </button>
-          </mat-card-actions>
-        </mat-card>
+      <!-- Minhas Cotações -->
+      <div class="cotacoes-section">
+        <h2>
+          <mat-icon>list_alt</mat-icon>
+          Minhas Cotações ({{ cotacoes.length }})
+        </h2>
 
+        <div *ngIf="cotacoes.length === 0" class="empty-state">
+          <mat-icon>inbox</mat-icon>
+          <p>Nenhuma cotação criada ainda.</p>
+          <button mat-raised-button color="primary" routerLink="/solicitar-cotacao">
+            Criar primeira cotação
+          </button>
+        </div>
+
+        <div class="cotacoes-grid" *ngIf="cotacoes.length > 0">
+          <mat-card *ngFor="let cotacao of cotacoes" class="cotacao-card">
+            <mat-card-header>
+              <mat-icon mat-card-avatar>description</mat-icon>
+              <mat-card-title>{{ cotacao.nome }}</mat-card-title>
+              <mat-card-subtitle>
+                <mat-chip class="status-chip" [ngClass]="'status-' + cotacao.status.toLowerCase()">
+                  {{ cotacao.status }}
+                </mat-chip>
+              </mat-card-subtitle>
+            </mat-card-header>
+
+            <mat-card-content>
+              <p class="cotacao-descricao">{{ cotacao.descricao }}</p>
+              <div class="cotacao-info">
+                <p><strong>Prazo:</strong> {{ cotacao.prazoResposta | date: 'dd/MM/yyyy' }}</p>
+                <p><strong>Criado em:</strong> {{ formatarData(cotacao.dataCreated) }}</p>
+              </div>
+            </mat-card-content>
+
+            <mat-card-actions>
+              <button mat-button color="primary">
+                <mat-icon>visibility</mat-icon>
+                Ver Detalhes
+              </button>
+              <button mat-button color="warn" (click)="deletarCotacao(cotacao.id)">
+                <mat-icon>delete</mat-icon>
+                Excluir
+              </button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+      </div>
+
+      <!-- Outras Opções -->
+      <div class="actions-grid">
         <mat-card class="action-card">
           <mat-card-header>
             <mat-icon>assessment</mat-icon>
