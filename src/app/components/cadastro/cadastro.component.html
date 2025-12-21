@@ -1,0 +1,101 @@
+<div class="cadastro-container">
+  <mat-card class="cadastro-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>person_add</mat-icon>
+        Criar Conta
+      </mat-card-title>
+      <mat-card-subtitle>Cadastre-se no Portal Hackatom</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="cadastroForm" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" formControlName="email" placeholder="seu@email.com">
+          <mat-icon matPrefix>email</mat-icon>
+          <mat-error *ngIf="cadastroForm.get('email')?.invalid">
+            {{ getErrorMessage('email') }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Tipo de Conta</mat-label>
+          <mat-select formControlName="perfil">
+            <mat-option *ngFor="let perfil of perfis" [value]="perfil.value">
+              {{ perfil.label }}
+            </mat-option>
+          </mat-select>
+          <mat-icon matPrefix>badge</mat-icon>
+          <mat-error *ngIf="cadastroForm.get('perfil')?.invalid">
+            {{ getErrorMessage('perfil') }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Senha</mat-label>
+          <input 
+            matInput 
+            [type]="hidePassword ? 'password' : 'text'" 
+            formControlName="senha"
+            placeholder="Mínimo 6 caracteres">
+          <mat-icon matPrefix>lock</mat-icon>
+          <button 
+            mat-icon-button 
+            matSuffix 
+            type="button"
+            (click)="hidePassword = !hidePassword"
+            [attr.aria-label]="'Esconder senha'"
+            [attr.aria-pressed]="hidePassword">
+            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          <mat-error *ngIf="cadastroForm.get('senha')?.invalid">
+            {{ getErrorMessage('senha') }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Confirmar Senha</mat-label>
+          <input 
+            matInput 
+            [type]="hideConfirmPassword ? 'password' : 'text'" 
+            formControlName="confirmarSenha"
+            placeholder="Digite a senha novamente">
+          <mat-icon matPrefix>lock</mat-icon>
+          <button 
+            mat-icon-button 
+            matSuffix 
+            type="button"
+            (click)="hideConfirmPassword = !hideConfirmPassword"
+            [attr.aria-label]="'Esconder senha'"
+            [attr.aria-pressed]="hideConfirmPassword">
+            <mat-icon>{{ hideConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          <mat-error *ngIf="cadastroForm.get('confirmarSenha')?.invalid">
+            {{ getErrorMessage('confirmarSenha') }}
+          </mat-error>
+        </mat-form-field>
+
+        <div class="button-container">
+          <button 
+            mat-raised-button 
+            color="primary" 
+            type="submit"
+            [disabled]="isLoading"
+            class="full-width">
+            <mat-icon *ngIf="!isLoading">how_to_reg</mat-icon>
+            <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+            {{ isLoading ? 'Cadastrando...' : 'Cadastrar' }}
+          </button>
+        </div>
+
+        <div class="login-link">
+          <p>
+            Já tem uma conta? 
+            <a routerLink="/login" mat-button color="primary">Faça login</a>
+          </p>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

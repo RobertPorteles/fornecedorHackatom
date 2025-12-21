@@ -2,9 +2,13 @@
   <nav class="navbar">
     <h1>Portal Hackatom</h1>
     <div class="nav-links">
-      <a routerLink="/cadastrar-fornecedor" routerLinkActive="active">Cadastrar Fornecedor</a>
-      <a routerLink="/solicitar-cotacao" routerLinkActive="active">Solicitar Cotação</a>
-      <a routerLink="/negociar-cotacao" routerLinkActive="active">Negociar Cotação</a>
+      <a routerLink="/login" routerLinkActive="active" *ngIf="!authService.isAuthenticated()">Login</a>
+      <ng-container *ngIf="authService.isAuthenticated()">
+        <a routerLink="/cadastrar-fornecedor" routerLinkActive="active">Cadastrar Fornecedor</a>
+        <a routerLink="/solicitar-cotacao" routerLinkActive="active">Solicitar Cotação</a>
+        <a routerLink="/negociar-cotacao" routerLinkActive="active">Negociar Cotação</a>
+        <button class="logout-button" (click)="logout()">Sair</button>
+      </ng-container>
     </div>
   </nav>
   <main>

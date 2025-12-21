@@ -1,0 +1,70 @@
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  padding: 20px;
+}
+
+.login-card {
+  max-width: 450px;
+  width: 100%;
+  padding: 20px;
+}
+
+mat-card-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+mat-card-title {
+  font-size: 28px;
+  font-weight: 500;
+  color: #3f51b5;
+  margin-bottom: 8px;
+}
+
+mat-card-subtitle {
+  font-size: 16px;
+  color: #666;
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.button-container {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.login-button {
+  width: 100%;
+  height: 48px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* Snackbar styles */
+::ng-deep .success-snackbar {
+  background-color: #4caf50 !important;
+  color: white !important;
+}
+
+::ng-deep .error-snackbar {
+  background-color: #f44336 !important;
+  color: white !important;
+}
+
+.cadastro-link {
+  text-align: center;
+  margin-top: 16px;
+}
+
+.cadastro-link p {
+  margin: 0;
+  color: rgba(0, 0, 0, 0.7);
+}

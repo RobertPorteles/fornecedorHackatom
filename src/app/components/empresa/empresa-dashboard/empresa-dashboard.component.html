@@ -1,0 +1,79 @@
+<div class="dashboard-container">
+  <mat-card class="welcome-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar>business</mat-icon>
+      <mat-card-title>Dashboard da Empresa</mat-card-title>
+      <mat-card-subtitle>Bem-vindo, {{ currentUser?.sub || 'Empresa' }}</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="user-info">
+        <p><strong>Email:</strong> {{ currentUser?.sub }}</p>
+        <p><strong>Perfil:</strong> {{ currentUser?.perfil }}</p>
+        <p><strong>ID:</strong> {{ currentUser?.id }}</p>
+      </div>
+
+      <div class="actions-grid">
+        <mat-card class="action-card">
+          <mat-card-header>
+            <mat-icon>person_add</mat-icon>
+            <mat-card-title>Cadastrar Fornecedor</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p>Adicione novos fornecedores ao sistema</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-raised-button color="primary" routerLink="/cadastrar-fornecedor">
+              Cadastrar
+            </button>
+          </mat-card-actions>
+        </mat-card>
+
+        <mat-card class="action-card">
+          <mat-card-header>
+            <mat-icon>request_quote</mat-icon>
+            <mat-card-title>Solicitar Cotação</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p>Solicite cotações aos fornecedores</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-raised-button color="primary" routerLink="/solicitar-cotacao">
+              Solicitar
+            </button>
+          </mat-card-actions>
+        </mat-card>
+
+        <mat-card class="action-card">
+          <mat-card-header>
+            <mat-icon>assessment</mat-icon>
+            <mat-card-title>Relatórios</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p>Visualize relatórios e métricas</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-raised-button color="accent">
+              Ver Relatórios
+            </button>
+          </mat-card-actions>
+        </mat-card>
+
+        <mat-card class="action-card">
+          <mat-card-header>
+            <mat-icon>group</mat-icon>
+            <mat-card-title>Fornecedores</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p>Gerencie seus fornecedores</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-raised-button color="accent">
+              Gerenciar
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

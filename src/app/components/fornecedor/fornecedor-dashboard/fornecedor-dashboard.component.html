@@ -1,0 +1,64 @@
+<div class="dashboard-container">
+  <mat-card class="welcome-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar>store</mat-icon>
+      <mat-card-title>Dashboard do Fornecedor</mat-card-title>
+      <mat-card-subtitle>Bem-vindo, {{ currentUser?.sub || 'Fornecedor' }}</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="user-info">
+        <p><strong>Email:</strong> {{ currentUser?.sub }}</p>
+        <p><strong>Perfil:</strong> {{ currentUser?.perfil }}</p>
+        <p><strong>ID:</strong> {{ currentUser?.id }}</p>
+      </div>
+
+      <div class="actions-grid">
+        <mat-card class="action-card">
+          <mat-card-header>
+            <mat-icon>assignment</mat-icon>
+            <mat-card-title>Cotações</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p>Visualize e responda cotações recebidas</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-raised-button color="primary" routerLink="/solicitar-cotacao">
+              Ver Cotações
+            </button>
+          </mat-card-actions>
+        </mat-card>
+
+        <mat-card class="action-card">
+          <mat-card-header>
+            <mat-icon>handshake</mat-icon>
+            <mat-card-title>Negociações</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p>Negocie preços e condições</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-raised-button color="primary" routerLink="/negociar-cotacao">
+              Negociar
+            </button>
+          </mat-card-actions>
+        </mat-card>
+
+        <mat-card class="action-card">
+          <mat-card-header>
+            <mat-icon>settings</mat-icon>
+            <mat-card-title>Configurações</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p>Gerencie seus dados e preferências</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-raised-button color="accent">
+              Configurar
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
