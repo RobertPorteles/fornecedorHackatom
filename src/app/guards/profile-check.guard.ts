@@ -47,10 +47,9 @@ export const profileCheckGuard: CanActivateFn = (route, state) => {
       }),
       catchError((error) => {
         if (error.status === 404) {
-          // Perfil não cadastrado, redirecionar para cadastro
-          console.log('📋 Empresa não cadastrada, redirecionando para /empresa/cadastro');
-          router.navigate(['/empresa/cadastro']);
-          return of(false);
+          // Perfil não cadastrado, permitir acesso
+          console.log('📋 Empresa não cadastrada');
+          return of(true);
         }
         // Outro erro, permitir acesso
         return of(true);
