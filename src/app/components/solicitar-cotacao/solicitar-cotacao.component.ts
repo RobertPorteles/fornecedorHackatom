@@ -10,6 +10,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { CotacaoService } from '../../services/cotacao.service';
+import { AuthService } from '../../services/auth.service';
+import { StatusCotacao, CadastrarCotacaoRequest } from '../../models/cotacao.model';
 
 @Component({
   selector: 'app-solicitar-cotacao',
@@ -37,7 +40,9 @@ export class SolicitarCotacaoComponent {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private cotacaoService: CotacaoService,
+    private authService: AuthService
   ) {
     this.informacoesForm = this.fb.group({
       nome: ['', [Validators.required, Validators.minLength(5)]],
@@ -60,30 +65,63 @@ export class SolicitarCotacaoComponent {
 
     this.isLoading = true;
 
-    const cotacaoData = {
-      id: this.generateId(),
-      status: 'ABERTA',
+    // Obter empresaId do usuário logado (ou gerar UUID temporário)
+    const currentUser = this.authService.getCurrentUser();
+    const empresaId = currentUser?.id || this.generateUUID();
+
+    console.log('👤 Usuário atual:', currentUser);
+    console.log('🏢 Empresa ID:', empresaId);
+
+    // Preparar dados para localStorage (simulação)
+    const cotacaoDataLocal = {
+      id: this.generateUUID(), // Usar UUID em vez de ID simples
+      status: StatusCotacao.ABERTA,
       dataCreated: new Date().toISOString(),
+      empresaId: empresaId,
       ...this.informacoesForm.value,
       ...this.propostaForm.value
     };
 
-    console.log('📤 Criando cotação:', cotacaoData);
+    // Preparar request para o backend
+    const request: CadastrarCotacaoRequest = {
+      nome: this.informacoesForm.value.nome,
+      descricao: this.informacoesForm.value.descricao,
+      data: this.cotacaoService.formatarDataParaBackend(this.informacoesForm.value.prazoResposta),
+      empresaId: empresaId,
+      status: StatusCotacao.ABERTA
+    };
 
-    // Salvar no localStorage
-    this.salvarCotacaoLocalStorage(cotacaoData);
-    
-    // Simulação
-    setTimeout(() => {
-      this.isLoading = false;
-      this.snackBar.open('Cotação criada com sucesso!', 'Fechar', {
-        duration: 5000,
-        horizontalPosition: 'end',
-        verticalPosition: 'top',
-        panelClass: ['success-snackbar']
-      });
-      this.router.navigate(['/empresa/dashboard']);
-    }, 1500);
+    console.log('📤 Criando cotação:', request);
+
+    // Salvar no localStorage primeiro
+    this.salvarCotacaoLocalStorage(cotacaoDataLocal);
+    console.log('💾 Cotação salva no localStorage');
+
+    // Tentar enviar para o backend
+    this.cotacaoService.criarCotacao(request).subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        console.log('✅ Cotação criada no backend:', response);
+        this.snackBar.open('Cotação criada com sucesso!', 'Fechar', {
+          duration: 5000,
+          horizontalPosition: 'end',
+          verticalPosition: 'top',
+          panelClass: ['success-snackbar']
+        });
+        this.router.navigate(['/empresa/dashboard']);
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.warn('⚠️ Backend indisponível, cotação salva localmente:', error);
+        this.snackBar.open('Cotação salva localmente! (Backend indisponível)', 'Fechar', {
+          duration: 5000,
+          horizontalPosition: 'end',
+          verticalPosition: 'top',
+          panelClass: ['warning-snackbar']
+        });
+        this.router.navigate(['/empresa/dashboard']);
+      }
+    });
   }
 
   private salvarCotacaoLocalStorage(cotacao: any): void {
@@ -97,8 +135,12 @@ export class SolicitarCotacaoComponent {
     return cotacoes ? JSON.parse(cotacoes) : [];
   }
 
-  private generateId(): string {
-    return Date.now().toString(36) + Math.random().toString(36).substr(2);
+  private generateUUID(): string {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      const r = Math.random() * 16 | 0;
+      const v = c === 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
   }
 
   getErrorMessage(formGroup: FormGroup, fieldName: string): string {

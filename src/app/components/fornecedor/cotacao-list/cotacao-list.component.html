@@ -3,7 +3,7 @@
     <mat-card-header>
       <mat-icon mat-card-avatar>request_quote</mat-icon>
       <mat-card-title>Cotações Disponíveis</mat-card-title>
-      <mat-card-subtitle>Visualize e participe de cotações abertas</mat-card-subtitle>
+      <mat-card-subtitle>Visualize cotações cadastradas pelas empresas</mat-card-subtitle>
     </mat-card-header>
   </mat-card>
 
@@ -24,6 +24,7 @@
   <div *ngIf="!isLoading && !error && cotacoes.length === 0" class="empty-container">
     <mat-icon>inbox</mat-icon>
     <p>Nenhuma cotação disponível no momento.</p>
+    <p class="hint">As empresas ainda não cadastraram cotações.</p>
   </div>
 
   <div *ngIf="!isLoading && !error && cotacoes.length > 0" class="cotacoes-list">
@@ -31,25 +32,30 @@
       <mat-card-header>
         <mat-icon mat-card-avatar>description</mat-icon>
         <mat-card-title>{{ cotacao.nome }}</mat-card-title>
-        <mat-card-subtitle *ngIf="cotacao.empresa">
-          <mat-icon class="subtitle-icon">business</mat-icon>
-          {{ cotacao.empresa.razaoSocial }}
+        <mat-card-subtitle>
+          <mat-chip class="status-chip" [ngClass]="'status-' + cotacao.status.toLowerCase()">
+            {{ cotacao.status }}
+          </mat-chip>
         </mat-card-subtitle>
       </mat-card-header>
 
       <mat-card-content>
-        <p *ngIf="cotacao.descricao" class="descricao">{{ cotacao.descricao }}</p>
+        <p class="descricao">{{ cotacao.descricao }}</p>
         
         <div class="cotacao-info">
-          <div *ngIf="cotacao.status" class="info-item">
-            <mat-chip [color]="cotacao.status === 'ABERTA' ? 'primary' : 'accent'" selected>
-              {{ cotacao.status }}
-            </mat-chip>
-          </div>
-          <div *ngIf="cotacao.dataCriacao" class="info-item">
+          <div class="info-item">
             <mat-icon>calendar_today</mat-icon>
-            <span>{{ cotacao.dataCriacao | date: 'dd/MM/yyyy' }}</span>
+            <span><strong>Prazo:</strong> {{ cotacao.prazoResposta | date: 'dd/MM/yyyy' }}</span>
           </div>
+          <div class="info-item">
+            <mat-icon>schedule</mat-icon>
+            <span><strong>Criado em:</strong> {{ formatarData(cotacao.dataCreated) }}</span>
+          </div>
+        </div>
+
+        <div class="detalhes-section" *ngIf="cotacao.detalhes">
+          <p class="detalhes-label"><strong>Detalhes:</strong></p>
+          <p class="detalhes-text">{{ cotacao.detalhes }}</p>
         </div>
       </mat-card-content>
 
@@ -57,6 +63,10 @@
         <button mat-raised-button color="primary" (click)="verDetalhes(cotacao.id)">
           <mat-icon>visibility</mat-icon>
           Ver Detalhes
+        </button>
+        <button mat-raised-button color="accent" (click)="enviarProposta(cotacao)" [disabled]="isLoading">
+          <mat-icon>send</mat-icon>
+          Enviar Proposta
         </button>
       </mat-card-actions>
     </mat-card>

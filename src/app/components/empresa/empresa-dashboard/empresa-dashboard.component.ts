@@ -4,6 +4,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { JwtPayload } from '../../../models/perfil.model';
@@ -27,6 +29,8 @@ interface Cotacao {
     MatButtonModule,
     MatIconModule,
     MatChipsModule,
+    MatDividerModule,
+    MatSnackBarModule,
     RouterLink
   ],
   templateUrl: './empresa-dashboard.component.html',
@@ -35,13 +39,18 @@ interface Cotacao {
 export class EmpresaDashboardComponent implements OnInit {
   currentUser: JwtPayload | null = null;
   cotacoes: Cotacao[] = [];
+  propostas: any[] = [];
 
-  constructor(public authService: AuthService) {}
+  constructor(
+    public authService: AuthService,
+    private snackBar: MatSnackBar
+  ) {}
 
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
     console.log('👤 Usuário Empresa:', this.currentUser);
     this.carregarCotacoes();
+    this.carregarPropostas();
   }
 
   carregarCotacoes(): void {
@@ -49,6 +58,22 @@ export class EmpresaDashboardComponent implements OnInit {
     if (cotacoesStorage) {
       this.cotacoes = JSON.parse(cotacoesStorage);
     }
+  }
+
+  carregarPropostas(): void {
+    const propostasStorage = localStorage.getItem('propostas');
+    if (propostasStorage) {
+      this.propostas = JSON.parse(propostasStorage);
+      console.log('📨 Propostas carregadas:', this.propostas);
+    }
+  }
+
+  getPropostasPorCotacao(cotacaoId: string): any[] {
+    return this.propostas.filter(p => p.cotacaoId === cotacaoId);
+  }
+
+  getNumeroPropostas(cotacaoId: string): number {
+    return this.getPropostasPorCotacao(cotacaoId).length;
   }
 
   deletarCotacao(id: string): void {
@@ -63,6 +88,37 @@ export class EmpresaDashboardComponent implements OnInit {
       year: 'numeric',
       hour: '2-digit',
       minute: '2-digit'
+    });
+  }
+
+  aceitarProposta(propostaId: string, cotacaoId: string): void {
+    // Atualizar status da cotação para APROVADO
+    const cotacaoIndex = this.cotacoes.findIndex(c => c.id === cotacaoId);
+    if (cotacaoIndex !== -1) {
+      this.cotacoes[cotacaoIndex].status = 'APROVADO';
+      localStorage.setItem('cotacoes', JSON.stringify(this.cotacoes));
+      console.log('✅ Cotação aprovada:', this.cotacoes[cotacaoIndex]);
+    }
+
+    this.snackBar.open('Proposta aceita! Status da cotação alterado para APROVADO.', 'Fechar', {
+      duration: 5000,
+      horizontalPosition: 'end',
+      verticalPosition: 'top',
+      panelClass: ['success-snackbar']
+    });
+  }
+
+  recusarProposta(propostaId: string): void {
+    // Remover proposta do array e atualizar localStorage
+    this.propostas = this.propostas.filter(p => p.id !== propostaId);
+    localStorage.setItem('propostas', JSON.stringify(this.propostas));
+    console.log('❌ Proposta recusada e removida:', propostaId);
+
+    this.snackBar.open('Proposta recusada e removida.', 'Fechar', {
+      duration: 3000,
+      horizontalPosition: 'end',
+      verticalPosition: 'top',
+      panelClass: ['info-snackbar']
     });
   }
 }

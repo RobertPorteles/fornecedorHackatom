@@ -108,10 +108,49 @@
   height: 18px;
 }
 
+.status-chip {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 12px;
+}
+
+.status-aberta {
+  background-color: #4caf50 !important;
+  color: white !important;
+}
+
+.status-fechada {
+  background-color: #f44336 !important;
+  color: white !important;
+}
+
+.detalhes-section {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.detalhes-label {
+  margin-bottom: 8px;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.detalhes-text {
+  color: rgba(0, 0, 0, 0.6);
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.hint {
+  font-size: 14px !important;
+  color: rgba(0, 0, 0, 0.4) !important;
+}
+
 mat-card-actions {
   padding: 16px;
   display: flex;
   justify-content: flex-end;
+  gap: 8px;
 }
 
 mat-card-actions button {

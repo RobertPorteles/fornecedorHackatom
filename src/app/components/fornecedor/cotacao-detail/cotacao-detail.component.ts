@@ -86,41 +86,59 @@ export class CotacaoDetailComponent implements OnInit {
     this.isLoading = true;
     this.error = '';
 
-    // Carregar cotação e dados do fornecedor em paralelo
-    forkJoin({
-      cotacao: this.cotacaoService.getCotacaoById(this.cotacaoId),
-      fornecedor: this.fornecedorService.getFornecedorMe().pipe(
-        catchError(() => of(null))
-      )
-    }).subscribe({
-      next: (result) => {
+    // Tentar carregar da API primeiro, se falhar usar localStorage
+    this.cotacaoService.getCotacaoById(this.cotacaoId).subscribe({
+      next: (cotacao) => {
         this.isLoading = false;
-        this.cotacao = result.cotacao;
-        
-        if (result.fornecedor) {
-          this.fornecedorId = result.fornecedor.id;
-          this.verificarParticipacao();
-        }
-
-        console.log('✅ Dados carregados:', {
-          cotacao: this.cotacao,
-          fornecedorId: this.fornecedorId,
-          status: this.statusParticipacao
-        });
+        this.cotacao = cotacao;
+        console.log('✅ Cotação carregada da API:', cotacao);
+        this.carregarDadosFornecedor();
       },
       error: (error) => {
-        this.isLoading = false;
-        console.error('❌ Erro ao carregar dados:', error);
+        console.warn('⚠️ API indisponível, tentando localStorage:', error);
+        this.carregarCotacaoLocalStorage();
+      }
+    });
+  }
+
+  carregarCotacaoLocalStorage(): void {
+    try {
+      const cotacoesStorage = localStorage.getItem('cotacoes');
+      if (cotacoesStorage) {
+        const cotacoes = JSON.parse(cotacoesStorage);
+        const cotacaoEncontrada = cotacoes.find((c: any) => c.id === this.cotacaoId);
         
-        if (error.status === 404) {
-          this.error = 'Cotação não encontrada.';
-        } else if (error.status === 403) {
-          this.error = 'Você não tem permissão para visualizar esta cotação.';
-        } else if (error.status === 0) {
-          this.error = 'Não foi possível conectar ao servidor.';
+        if (cotacaoEncontrada) {
+          this.cotacao = cotacaoEncontrada;
+          this.isLoading = false;
+          console.log('✅ Cotação carregada do localStorage:', cotacaoEncontrada);
+          this.carregarDadosFornecedor();
         } else {
-          this.error = 'Erro ao carregar cotação. Tente novamente.';
+          this.isLoading = false;
+          this.error = 'Cotação não encontrada';
         }
+      } else {
+        this.isLoading = false;
+        this.error = 'Nenhuma cotação disponível';
+      }
+    } catch (error) {
+      console.error('❌ Erro ao carregar do localStorage:', error);
+      this.isLoading = false;
+      this.error = 'Erro ao carregar cotação';
+    }
+  }
+
+  carregarDadosFornecedor(): void {
+    this.fornecedorService.getFornecedorMe().subscribe({
+      next: (fornecedor) => {
+        if (fornecedor?.id) {
+          this.fornecedorId = fornecedor.id;
+          this.verificarParticipacao();
+        }
+      },
+      error: (error) => {
+        console.warn('⚠️ Fornecedor não cadastrado ou API indisponível');
+        // Continuar mesmo sem dados do fornecedor
       }
     });
   }
@@ -131,14 +149,21 @@ export class CotacaoDetailComponent implements OnInit {
       return;
     }
 
-    // Verificar se fornecedor está na lista de participantes
-    const participando = this.cotacao.fornecedores?.some(
-      f => f.id === this.fornecedorId
-    );
+    // Apenas verificar localStorage
+    this.verificarParticipacaoLocalStorage();
+  }
 
-    if (participando) {
-      this.statusParticipacao = 'em-negociacao';
-      this.carregarHistorico();
+  verificarParticipacaoLocalStorage(): void {
+    const propostas = localStorage.getItem('propostas');
+    if (propostas) {
+      const todasPropostas = JSON.parse(propostas);
+      const minhasPropostas = todasPropostas.filter((p: any) => p.cotacaoId === this.cotacaoId);
+      if (minhasPropostas.length > 0) {
+        this.statusParticipacao = 'participando';
+        this.historico = minhasPropostas;
+      } else {
+        this.statusParticipacao = 'nao-participando';
+      }
     } else {
       this.statusParticipacao = 'nao-participando';
     }
@@ -169,10 +194,14 @@ export class CotacaoDetailComponent implements OnInit {
     this.isSending = true;
     const texto = this.propostaForm.value.texto;
 
+    // Tentar enviar para API primeiro
     this.propostaService.solicitarCotacao(this.cotacaoId, texto).subscribe({
       next: (response) => {
         this.isSending = false;
-        console.log('✅ Proposta enviada:', response);
+        console.log('✅ Proposta enviada para API:', response);
+        
+        // Salvar também no localStorage
+        this.salvarPropostaLocalStorage(texto);
         
         this.snackBar.open('Proposta enviada com sucesso!', 'Fechar', {
           duration: 5000,
@@ -182,37 +211,57 @@ export class CotacaoDetailComponent implements OnInit {
         });
 
         // Atualizar status e desabilitar formulário de proposta
-        this.statusParticipacao = 'em-negociacao';
+        this.statusParticipacao = 'participando';
         this.propostaForm.disable();
         
         // Recarregar dados para atualizar status
         this.carregarDados();
       },
       error: (error) => {
+        // Se API falhar, salvar apenas localmente
+        console.warn('⚠️ API indisponível, salvando proposta localmente:', error);
+        this.salvarPropostaLocalStorage(texto);
         this.isSending = false;
-        console.error('❌ Erro ao enviar proposta:', error);
         
-        let errorMessage = 'Erro ao enviar proposta.';
-        
-        if (error.status === 404) {
-          errorMessage = 'Cotação não encontrada.';
-        } else if (error.status === 403) {
-          errorMessage = 'Você precisa completar seu cadastro de fornecedor.';
-        } else if (error.status === 400) {
-          errorMessage = error.error?.message || 'Dados inválidos.';
-        } else if (error.status === 0) {
-          errorMessage = 'Não foi possível conectar ao servidor.';
-        } else if (error.error?.message) {
-          errorMessage = error.error.message;
-        }
-        
-        this.snackBar.open(errorMessage, 'Fechar', {
-          duration: 6000,
+        this.snackBar.open('Proposta salva localmente! (API indisponível)', 'Fechar', {
+          duration: 5000,
           horizontalPosition: 'end',
           verticalPosition: 'top',
-          panelClass: ['error-snackbar']
+          panelClass: ['warning-snackbar']
         });
+
+        // Atualizar status
+        this.statusParticipacao = 'participando';
+        this.propostaForm.disable();
       }
+    });
+  }
+
+  private salvarPropostaLocalStorage(texto: string): void {
+    const propostas = this.getPropostasLocalStorage();
+    const novaProposta = {
+      id: this.generateUUID(),
+      cotacaoId: this.cotacaoId,
+      cotacaoNome: this.cotacao?.nome || 'Cotação',
+      texto: texto,
+      dataEnvio: new Date().toISOString(),
+      fornecedorEmail: this.authService.getCurrentUser()?.sub || 'Fornecedor'
+    };
+    propostas.push(novaProposta);
+    localStorage.setItem('propostas', JSON.stringify(propostas));
+    console.log('💾 Proposta salva no localStorage:', novaProposta);
+  }
+
+  private getPropostasLocalStorage(): any[] {
+    const propostas = localStorage.getItem('propostas');
+    return propostas ? JSON.parse(propostas) : [];
+  }
+
+  private generateUUID(): string {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      const r = Math.random() * 16 | 0;
+      const v = c === 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
     });
   }
 

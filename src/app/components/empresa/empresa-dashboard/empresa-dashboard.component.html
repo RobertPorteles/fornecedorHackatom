@@ -63,6 +63,45 @@
                 <p><strong>Prazo:</strong> {{ cotacao.prazoResposta | date: 'dd/MM/yyyy' }}</p>
                 <p><strong>Criado em:</strong> {{ formatarData(cotacao.dataCreated) }}</p>
               </div>
+
+              <!-- Propostas Recebidas -->
+              <div class="propostas-section" *ngIf="getNumeroPropostas(cotacao.id) > 0">
+                <mat-divider style="margin: 16px 0;"></mat-divider>
+                <h4>
+                  <mat-icon>mail</mat-icon>
+                  Propostas Recebidas ({{ getNumeroPropostas(cotacao.id) }})
+                </h4>
+                <div class="propostas-list">
+                  <mat-card *ngFor="let proposta of getPropostasPorCotacao(cotacao.id)" class="proposta-item">
+                    <mat-card-content>
+                      <div class="proposta-header">
+                        <strong>{{ proposta.fornecedorEmail }}</strong>
+                        <span class="proposta-data">{{ proposta.dataEnvio | date: 'dd/MM/yyyy HH:mm' }}</span>
+                      </div>
+                      <p class="proposta-texto">{{ proposta.texto }}</p>
+                      
+                      <div class="proposta-actions">
+                        <button mat-raised-button color="primary" (click)="aceitarProposta(proposta.id, cotacao.id)">
+                          <mat-icon>check_circle</mat-icon>
+                          Aceitar
+                        </button>
+                        <button mat-raised-button color="warn" (click)="recusarProposta(proposta.id)">
+                          <mat-icon>cancel</mat-icon>
+                          Recusar
+                        </button>
+                      </div>
+                    </mat-card-content>
+                  </mat-card>
+                </div>
+              </div>
+
+              <div class="no-propostas" *ngIf="getNumeroPropostas(cotacao.id) === 0">
+                <mat-divider style="margin: 16px 0;"></mat-divider>
+                <p class="info-text">
+                  <mat-icon>info</mat-icon>
+                  Nenhuma proposta recebida ainda.
+                </p>
+              </div>
             </mat-card-content>
 
             <mat-card-actions>

@@ -100,6 +100,131 @@ mat-card-header mat-icon {
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
+.cotacao-card mat-card-header {
+  padding: 12px 16px;
+}
+
+.cotacao-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.propostas-section {
+  margin-top: 16px;
+}
+
+.propostas-section h4 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 16px;
+  color: #555;
+}
+
+.propostas-section h4 mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  color: #3f51b5;
+}
+
+.propostas-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.proposta-item {
+  background-color: #f9f9f9;
+  border-left: 3px solid #3f51b5;
+}
+
+.proposta-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.proposta-header strong {
+  color: #3f51b5;
+  font-size: 14px;
+}
+
+.proposta-data {
+  font-size: 12px;
+  color: #999;
+}
+
+.proposta-texto {
+  margin: 0;
+  color: #333;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.no-propostas {
+  margin-top: 16px;
+}
+
+.no-propostas .info-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #999;
+  font-style: italic;
+  margin: 8px 0;
+}
+
+.no-propostas .info-text mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.proposta-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  justify-content: flex-end;
+}
+
+.proposta-actions button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  font-size: 13px;
+  min-width: auto;
+}
+
+.proposta-actions button mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+.proposta-actions button[color="primary"] {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.proposta-actions button[color="primary"]:hover {
+  background-color: #45a049;
+}
+
+.proposta-actions button[color="warn"] {
+  background-color: #f44336;
+  color: white;
+}
+
+.proposta-actions button[color="warn"]:hover {
+  background-color: #da190b;
+}
+
 .cotacao-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
