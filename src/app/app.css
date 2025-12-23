@@ -41,6 +41,27 @@
   font-weight: 500;
 }
 
+.user-context {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.user-context mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.context-name {
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
 .logout-button {
   background-color: rgba(255, 255, 255, 0.15);
   color: white;

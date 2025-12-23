@@ -3,6 +3,10 @@
     <h1>Portal Hackatom</h1>
     <div class="nav-links">
       <ng-container *ngIf="authService.isAuthenticated()">
+        <div class="user-context" *ngIf="contextName">
+          <mat-icon>{{ contextIcon }}</mat-icon>
+          <span class="context-name">{{ contextName }}</span>
+        </div>
         <button class="logout-button" (click)="logout()">Sair</button>
       </ng-container>
     </div>

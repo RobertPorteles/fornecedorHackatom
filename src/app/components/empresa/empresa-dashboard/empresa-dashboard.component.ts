@@ -6,10 +6,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { CotacaoService } from '../../../services/cotacao.service';
+import { FornecedorService } from '../../../services/fornecedor.service';
 import { JwtPayload } from '../../../models/perfil.model';
 import { ConvidarFornecedoresDialogComponent } from '../convidar-fornecedores-dialog/convidar-fornecedores-dialog.component';
 
@@ -34,6 +36,7 @@ interface Cotacao {
     MatChipsModule,
     MatDividerModule,
     MatSnackBarModule,
+    MatTooltipModule,
     RouterLink
   ],
   templateUrl: './empresa-dashboard.component.html',
@@ -43,19 +46,37 @@ export class EmpresaDashboardComponent implements OnInit {
   currentUser: JwtPayload | null = null;
   cotacoes: Cotacao[] = [];
   propostas: any[] = [];
+  empresaNome: string = '';
+  empresaCnpj: string = '';
 
   constructor(
     public authService: AuthService,
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
-    private cotacaoService: CotacaoService
+    private cotacaoService: CotacaoService,
+    private fornecedorService: FornecedorService
   ) {}
 
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
     console.log('👤 Usuário Empresa:', this.currentUser);
+    this.carregarDadosEmpresa();
     this.carregarCotacoes();
     this.carregarPropostas();
+  }
+
+  carregarDadosEmpresa(): void {
+    this.fornecedorService.getEmpresaMe().subscribe({
+      next: (empresa) => {
+        this.empresaNome = empresa.razaoSocial || empresa.nome || 'Empresa';
+        this.empresaCnpj = empresa.cnpj || '';
+        console.log('🏢 Empresa carregada:', this.empresaNome);
+      },
+      error: (error) => {
+        console.error('Erro ao carregar dados da empresa:', error);
+        this.empresaNome = this.currentUser?.sub || 'Empresa';
+      }
+    });
   }
 
   carregarCotacoes(): void {
@@ -97,6 +118,18 @@ export class EmpresaDashboardComponent implements OnInit {
   }
 
   aceitarProposta(propostaId: string, cotacaoId: string): void {
+    // Atualizar status da proposta para ACEITA
+    const propostasStorage = localStorage.getItem('propostas');
+    if (propostasStorage) {
+      const todasPropostas = JSON.parse(propostasStorage);
+      const propostaIndex = todasPropostas.findIndex((p: any) => p.id === propostaId);
+      if (propostaIndex !== -1) {
+        todasPropostas[propostaIndex].status = 'ACEITA';
+        localStorage.setItem('propostas', JSON.stringify(todasPropostas));
+        console.log('✅ Proposta aceita:', todasPropostas[propostaIndex]);
+      }
+    }
+
     // Atualizar status da cotação para APROVADO
     const cotacaoIndex = this.cotacoes.findIndex(c => c.id === cotacaoId);
     if (cotacaoIndex !== -1) {
@@ -104,6 +137,9 @@ export class EmpresaDashboardComponent implements OnInit {
       localStorage.setItem('cotacoes', JSON.stringify(this.cotacoes));
       console.log('✅ Cotação aprovada:', this.cotacoes[cotacaoIndex]);
     }
+
+    // Recarregar propostas
+    this.carregarPropostas();
 
     this.snackBar.open('Proposta aceita! Status da cotação alterado para APROVADO.', 'Fechar', {
       duration: 5000,
@@ -114,12 +150,22 @@ export class EmpresaDashboardComponent implements OnInit {
   }
 
   recusarProposta(propostaId: string): void {
-    // Remover proposta do array e atualizar localStorage
-    this.propostas = this.propostas.filter(p => p.id !== propostaId);
-    localStorage.setItem('propostas', JSON.stringify(this.propostas));
-    console.log('❌ Proposta recusada e removida:', propostaId);
+    // Atualizar status da proposta para RECUSADA
+    const propostasStorage = localStorage.getItem('propostas');
+    if (propostasStorage) {
+      const todasPropostas = JSON.parse(propostasStorage);
+      const propostaIndex = todasPropostas.findIndex((p: any) => p.id === propostaId);
+      if (propostaIndex !== -1) {
+        todasPropostas[propostaIndex].status = 'RECUSADA';
+        localStorage.setItem('propostas', JSON.stringify(todasPropostas));
+        console.log('❌ Proposta recusada:', todasPropostas[propostaIndex]);
+      }
+    }
 
-    this.snackBar.open('Proposta recusada e removida.', 'Fechar', {
+    // Recarregar propostas
+    this.carregarPropostas();
+
+    this.snackBar.open('Proposta recusada.', 'Fechar', {
       duration: 3000,
       horizontalPosition: 'end',
       verticalPosition: 'top',

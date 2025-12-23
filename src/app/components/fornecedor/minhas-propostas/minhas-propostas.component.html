@@ -1,0 +1,178 @@
+<div class="propostas-container">
+  <div class="propostas-header">
+    <button mat-icon-button (click)="voltar()" class="back-button">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1>Minhas Propostas</h1>
+    <button mat-icon-button (click)="carregarPropostas()" class="refresh-button" matTooltip="Atualizar">
+      <mat-icon>refresh</mat-icon>
+    </button>
+    <button mat-icon-button (click)="toggleDebugMode()" [color]="debugMode ? 'warn' : 'default'" matTooltip="Modo Debug (mostrar todas)">
+      <mat-icon>bug_report</mat-icon>
+    </button>
+  </div>
+
+  <div *ngIf="debugMode" class="debug-alert">
+    <mat-icon>warning</mat-icon>
+    <span>MODO DEBUG ATIVADO - Mostrando todas as propostas (sem filtro por email)</span>
+  </div>
+
+  <mat-card *ngIf="!isLoading" class="main-card">
+    <mat-tab-group animationDuration="300ms">
+      <!-- Todas -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon>view_list</mat-icon>
+          Todas ({{ todasPropostas.length }})
+        </ng-template>
+        <div class="tab-content">
+          <div *ngIf="todasPropostas.length === 0" class="empty-state">
+            <mat-icon>inbox</mat-icon>
+            <p>Você ainda não enviou nenhuma proposta</p>
+            <button mat-raised-button color="primary" routerLink="/fornecedor/cotacoes">
+              Ver Cotações Disponíveis
+            </button>
+          </div>
+
+          <div *ngIf="todasPropostas.length > 0" class="propostas-list">
+            <mat-card *ngFor="let proposta of todasPropostas" class="proposta-card">
+              <mat-card-header>
+                <mat-icon mat-card-avatar [color]="proposta.status === 'ACEITA' ? 'primary' : proposta.status === 'RECUSADA' ? 'warn' : ''">
+                  {{ proposta.status === 'ACEITA' ? 'check_circle' : proposta.status === 'RECUSADA' ? 'cancel' : 'schedule' }}
+                </mat-icon>
+                <mat-card-title>{{ proposta.cotacaoNome }}</mat-card-title>
+                <mat-card-subtitle>{{ formatarData(proposta.dataEnvio) }}</mat-card-subtitle>
+                <mat-chip *ngIf="proposta.status" [class]="'status-' + proposta.status.toLowerCase()">
+                  {{ proposta.status }}
+                </mat-chip>
+                <mat-chip *ngIf="!proposta.status" class="status-em-analise">
+                  EM ANÁLISE
+                </mat-chip>
+              </mat-card-header>
+              <mat-card-content>
+                <p class="proposta-texto">{{ proposta.texto }}</p>
+              </mat-card-content>
+              <mat-card-actions>
+                <button mat-button color="primary" (click)="verCotacao(proposta.cotacaoId)">
+                  <mat-icon>visibility</mat-icon>
+                  Ver Cotação
+                </button>
+              </mat-card-actions>
+            </mat-card>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- Em Análise -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon>schedule</mat-icon>
+          Em Análise ({{ propostasEmAnalise.length }})
+        </ng-template>
+        <div class="tab-content">
+          <div *ngIf="propostasEmAnalise.length === 0" class="empty-state">
+            <mat-icon>inbox</mat-icon>
+            <p>Nenhuma proposta em análise</p>
+          </div>
+
+          <div *ngIf="propostasEmAnalise.length > 0" class="propostas-list">
+            <mat-card *ngFor="let proposta of propostasEmAnalise" class="proposta-card">
+              <mat-card-header>
+                <mat-icon mat-card-avatar>schedule</mat-icon>
+                <mat-card-title>{{ proposta.cotacaoNome }}</mat-card-title>
+                <mat-card-subtitle>{{ formatarData(proposta.dataEnvio) }}</mat-card-subtitle>
+                <mat-chip class="status-em-analise">EM ANÁLISE</mat-chip>
+              </mat-card-header>
+              <mat-card-content>
+                <p class="proposta-texto">{{ proposta.texto }}</p>
+              </mat-card-content>
+              <mat-card-actions>
+                <button mat-button color="primary" (click)="verCotacao(proposta.cotacaoId)">
+                  <mat-icon>visibility</mat-icon>
+                  Ver Cotação
+                </button>
+              </mat-card-actions>
+            </mat-card>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- Aceitas -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon>check_circle</mat-icon>
+          Aceitas ({{ propostasAceitas.length }})
+        </ng-template>
+        <div class="tab-content">
+          <div *ngIf="propostasAceitas.length === 0" class="empty-state">
+            <mat-icon>inbox</mat-icon>
+            <p>Nenhuma proposta aceita ainda</p>
+          </div>
+
+          <div *ngIf="propostasAceitas.length > 0" class="propostas-list">
+            <mat-card *ngFor="let proposta of propostasAceitas" class="proposta-card proposta-aceita">
+              <mat-card-header>
+                <mat-icon mat-card-avatar color="primary">check_circle</mat-icon>
+                <mat-card-title>{{ proposta.cotacaoNome }}</mat-card-title>
+                <mat-card-subtitle>{{ formatarData(proposta.dataEnvio) }}</mat-card-subtitle>
+                <mat-chip class="status-aceita">ACEITA</mat-chip>
+              </mat-card-header>
+              <mat-card-content>
+                <p class="proposta-texto">{{ proposta.texto }}</p>
+                <div class="success-message">
+                  <mat-icon>celebration</mat-icon>
+                  <span>Parabéns! Sua proposta foi aceita!</span>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <button mat-button color="primary" (click)="verCotacao(proposta.cotacaoId)">
+                  <mat-icon>visibility</mat-icon>
+                  Ver Cotação
+                </button>
+              </mat-card-actions>
+            </mat-card>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- Recusadas -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon>cancel</mat-icon>
+          Recusadas ({{ propostasRecusadas.length }})
+        </ng-template>
+        <div class="tab-content">
+          <div *ngIf="propostasRecusadas.length === 0" class="empty-state">
+            <mat-icon>inbox</mat-icon>
+            <p>Nenhuma proposta recusada</p>
+          </div>
+
+          <div *ngIf="propostasRecusadas.length > 0" class="propostas-list">
+            <mat-card *ngFor="let proposta of propostasRecusadas" class="proposta-card proposta-recusada">
+              <mat-card-header>
+                <mat-icon mat-card-avatar color="warn">cancel</mat-icon>
+                <mat-card-title>{{ proposta.cotacaoNome }}</mat-card-title>
+                <mat-card-subtitle>{{ formatarData(proposta.dataEnvio) }}</mat-card-subtitle>
+                <mat-chip class="status-recusada">RECUSADA</mat-chip>
+              </mat-card-header>
+              <mat-card-content>
+                <p class="proposta-texto">{{ proposta.texto }}</p>
+              </mat-card-content>
+              <mat-card-actions>
+                <button mat-button color="primary" (click)="verCotacao(proposta.cotacaoId)">
+                  <mat-icon>visibility</mat-icon>
+                  Ver Cotação
+                </button>
+              </mat-card-actions>
+            </mat-card>
+          </div>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-spinner></mat-spinner>
+  </div>
+</div>

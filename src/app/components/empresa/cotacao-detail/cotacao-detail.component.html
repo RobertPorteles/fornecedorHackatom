@@ -1,0 +1,157 @@
+<div class="cotacao-detail-container" *ngIf="!isLoading && cotacao">
+  <!-- Header -->
+  <div class="detail-header">
+    <button mat-icon-button (click)="voltar()" class="back-button">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div class="header-content">
+      <h1>{{ cotacao.nome }}</h1>
+      <mat-chip [class]="getStatusClass(cotacao.status)">
+        {{ cotacao.status }}
+      </mat-chip>
+    </div>
+  </div>
+
+  <!-- Informações da Cotação -->
+  <mat-card class="info-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar>description</mat-icon>
+      <mat-card-title>Informações da Cotação</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="info-label">Descrição:</span>
+          <p class="info-value">{{ cotacao.descricao }}</p>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Detalhes:</span>
+          <p class="info-value">{{ cotacao.detalhes }}</p>
+        </div>
+        <div class="info-row">
+          <div class="info-item">
+            <span class="info-label">Prazo de Resposta:</span>
+            <p class="info-value">{{ formatarData(cotacao.prazoResposta) }}</p>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Data de Criação:</span>
+            <p class="info-value">{{ formatarData(cotacao.dataCreated) }}</p>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button color="accent" (click)="convidarFornecedores()">
+        <mat-icon>person_add</mat-icon>
+        Convidar Fornecedores
+      </button>
+      <button mat-raised-button color="warn" (click)="deletarCotacao()">
+        <mat-icon>delete</mat-icon>
+        Excluir Cotação
+      </button>
+    </mat-card-actions>
+  </mat-card>
+
+  <!-- Fornecedores Convidados -->
+  <mat-card class="fornecedores-card" *ngIf="fornecedoresConvidados.length > 0">
+    <mat-card-header>
+      <mat-icon mat-card-avatar>people</mat-icon>
+      <mat-card-title>Fornecedores Convidados ({{ fornecedoresConvidados.length }})</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="fornecedores-chips">
+        <mat-chip *ngFor="let fornecedor of fornecedoresConvidados">
+          {{ fornecedor }}
+        </mat-chip>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Propostas -->
+  <mat-card class="propostas-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar>mail</mat-icon>
+      <mat-card-title>Propostas Recebidas ({{ propostas.length }})</mat-card-title>
+      <button mat-icon-button (click)="toggleModoComparacao()" [color]="modoComparacao ? 'accent' : 'default'" matTooltip="Modo de Comparação">
+        <mat-icon>compare_arrows</mat-icon>
+      </button>
+    </mat-card-header>
+    <mat-card-content>
+      <!-- Estado Vazio -->
+      <div *ngIf="propostas.length === 0" class="empty-state">
+        <mat-icon>inbox</mat-icon>
+        <p>Nenhuma proposta recebida ainda</p>
+        <button mat-raised-button color="primary" (click)="convidarFornecedores()">
+          Convidar Fornecedores
+        </button>
+      </div>
+
+      <!-- Lista Normal -->
+      <div *ngIf="propostas.length > 0 && !modoComparacao" class="propostas-list">
+        <mat-card *ngFor="let proposta of propostas" class="proposta-card">
+          <mat-card-header>
+            <mat-icon mat-card-avatar [color]="proposta.status === 'ACEITA' ? 'primary' : proposta.status === 'RECUSADA' ? 'warn' : ''">
+              {{ proposta.status === 'ACEITA' ? 'check_circle' : proposta.status === 'RECUSADA' ? 'cancel' : 'person' }}
+            </mat-icon>
+            <mat-card-title>{{ proposta.fornecedorEmail }}</mat-card-title>
+            <mat-card-subtitle>{{ formatarData(proposta.dataEnvio) }}</mat-card-subtitle>
+            <mat-chip *ngIf="proposta.status" [class]="'status-' + proposta.status.toLowerCase()">
+              {{ proposta.status }}
+            </mat-chip>
+          </mat-card-header>
+          <mat-card-content>
+            <p class="proposta-texto">{{ proposta.texto }}</p>
+          </mat-card-content>
+          <mat-card-actions *ngIf="!proposta.status">
+            <button mat-raised-button color="primary" (click)="aceitarProposta(proposta.id)">
+              <mat-icon>check_circle</mat-icon>
+              Aceitar
+            </button>
+            <button mat-raised-button color="warn" (click)="recusarProposta(proposta.id)">
+              <mat-icon>cancel</mat-icon>
+              Recusar
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+
+      <!-- Modo Comparação -->
+      <div *ngIf="propostas.length > 0 && modoComparacao" class="comparacao-grid">
+        <mat-card *ngFor="let proposta of propostas" class="proposta-compare-card" [class.proposta-aceita]="proposta.status === 'ACEITA'">
+          <div class="compare-header">
+            <mat-icon [color]="proposta.status === 'ACEITA' ? 'primary' : ''">person</mat-icon>
+            <span class="fornecedor-nome">{{ proposta.fornecedorEmail }}</span>
+            <mat-chip *ngIf="proposta.status" [class]="'status-' + proposta.status.toLowerCase()" class="status-chip-small">
+              {{ proposta.status }}
+            </mat-chip>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="compare-content">
+            <p class="proposta-texto-compare">{{ proposta.texto }}</p>
+            <p class="data-envio">{{ formatarData(proposta.dataEnvio) }}</p>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="compare-actions" *ngIf="!proposta.status">
+            <button mat-mini-fab color="primary" (click)="aceitarProposta(proposta.id)" matTooltip="Aceitar">
+              <mat-icon>check</mat-icon>
+            </button>
+            <button mat-mini-fab color="warn" (click)="recusarProposta(proposta.id)" matTooltip="Recusar">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+        </mat-card>
+      </div>
+    </mat-card-content>
+    <mat-card-actions *ngIf="propostas.length > 0 && cotacao.status !== 'FECHADA'">
+      <button mat-raised-button color="accent" (click)="finalizarCotacao()">
+        <mat-icon>done_all</mat-icon>
+        Finalizar Cotação
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>
+
+<!-- Loading State -->
+<div *ngIf="isLoading" class="loading-container">
+  <mat-spinner></mat-spinner>
+</div>

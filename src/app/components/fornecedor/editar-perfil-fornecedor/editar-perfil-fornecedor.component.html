@@ -1,0 +1,146 @@
+<div class="perfil-container">
+  <div class="perfil-header">
+    <button mat-icon-button (click)="cancelar()" class="back-button">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1>Editar Perfil do Fornecedor</h1>
+  </div>
+
+  <mat-card *ngIf="!isLoading" class="perfil-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar>store</mat-icon>
+      <mat-card-title>Dados do Fornecedor</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="perfilForm">
+        <!-- Dados do Fornecedor -->
+        <div class="form-section">
+          <h3>Informações Principais</h3>
+          <div class="form-grid">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Nome</mat-label>
+              <input matInput formControlName="nome" required>
+              <mat-icon matPrefix>store</mat-icon>
+              <mat-error *ngIf="perfilForm.get('nome')?.hasError('required')">
+                Nome é obrigatório
+              </mat-error>
+              <mat-error *ngIf="perfilForm.get('nome')?.hasError('minlength')">
+                Mínimo de 3 caracteres
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>CNPJ</mat-label>
+              <input matInput formControlName="cnpj" (input)="onCNPJInput($event)" required>
+              <mat-icon matPrefix>badge</mat-icon>
+              <mat-hint>Formato: 00.000.000/0000-00</mat-hint>
+              <mat-error *ngIf="perfilForm.get('cnpj')?.hasError('required')">
+                CNPJ é obrigatório
+              </mat-error>
+              <mat-error *ngIf="perfilForm.get('cnpj')?.hasError('pattern')">
+                CNPJ inválido
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Telefone</mat-label>
+              <input matInput formControlName="telefone" (input)="onTelefoneInput($event)" required>
+              <mat-icon matPrefix>phone</mat-icon>
+              <mat-hint>Formato: (00) 00000-0000</mat-hint>
+              <mat-error *ngIf="perfilForm.get('telefone')?.hasError('required')">
+                Telefone é obrigatório
+              </mat-error>
+              <mat-error *ngIf="perfilForm.get('telefone')?.hasError('pattern')">
+                Telefone inválido
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Endereço -->
+        <div class="form-section">
+          <h3>Endereço</h3>
+          <div class="form-grid">
+            <mat-form-field appearance="outline">
+              <mat-label>CEP</mat-label>
+              <input matInput formControlName="cep" (input)="onCEPInput($event)" required>
+              <mat-icon matPrefix>place</mat-icon>
+              <mat-hint>Formato: 00000-000</mat-hint>
+              <mat-error *ngIf="perfilForm.get('cep')?.hasError('required')">
+                CEP é obrigatório
+              </mat-error>
+              <mat-error *ngIf="perfilForm.get('cep')?.hasError('pattern')">
+                CEP inválido
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="span-2">
+              <mat-label>Logradouro</mat-label>
+              <input matInput formControlName="logradouro" required>
+              <mat-error *ngIf="perfilForm.get('logradouro')?.hasError('required')">
+                Logradouro é obrigatório
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Número</mat-label>
+              <input matInput formControlName="numero" required>
+              <mat-error *ngIf="perfilForm.get('numero')?.hasError('required')">
+                Número é obrigatório
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Complemento</mat-label>
+              <input matInput formControlName="complemento">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Bairro</mat-label>
+              <input matInput formControlName="bairro" required>
+              <mat-error *ngIf="perfilForm.get('bairro')?.hasError('required')">
+                Bairro é obrigatório
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Cidade</mat-label>
+              <input matInput formControlName="cidade" required>
+              <mat-error *ngIf="perfilForm.get('cidade')?.hasError('required')">
+                Cidade é obrigatória
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Estado</mat-label>
+              <input matInput formControlName="estado" maxlength="2" required>
+              <mat-hint>Sigla (ex: SP)</mat-hint>
+              <mat-error *ngIf="perfilForm.get('estado')?.hasError('required')">
+                Estado é obrigatório
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+      </form>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <button mat-raised-button color="primary" (click)="salvar()" [disabled]="perfilForm.invalid || isSaving">
+        <mat-icon *ngIf="!isSaving">save</mat-icon>
+        <mat-spinner *ngIf="isSaving" diameter="20"></mat-spinner>
+        {{ isSaving ? 'Salvando...' : 'Salvar Alterações' }}
+      </button>
+      <button mat-raised-button (click)="cancelar()" [disabled]="isSaving">
+        <mat-icon>cancel</mat-icon>
+        Cancelar
+      </button>
+    </mat-card-actions>
+  </mat-card>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Carregando dados...</p>
+  </div>
+</div>

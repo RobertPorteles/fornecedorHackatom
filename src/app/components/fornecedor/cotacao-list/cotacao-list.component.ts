@@ -13,6 +13,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CotacaoService } from '../../../services/cotacao.service';
+import { AuthService } from '../../../services/auth.service';
 import { SolicitarCotacaoRequest } from '../../../models/cotacao.model';
 
 interface Cotacao {
@@ -54,6 +55,7 @@ export class CotacaoListComponent implements OnInit {
   constructor(
     private router: Router,
     private cotacaoService: CotacaoService,
+    private authService: AuthService,
     private snackBar: MatSnackBar
   ) {}
 
@@ -144,7 +146,9 @@ export class CotacaoListComponent implements OnInit {
     // Tentar enviar para a API primeiro
     this.cotacaoService.solicitarParticipacaoCotacao(cotacao.id, request).subscribe({
       next: (response) => {
-        this.isLoading = false;
+        setTimeout(() => {
+          this.isLoading = false;
+        });
         console.log('✅ Proposta enviada para API:', response);
         this.snackBar.open('Proposta enviada com sucesso! Você foi adicionado à cotação.', 'Fechar', {
           duration: 5000,
@@ -157,7 +161,9 @@ export class CotacaoListComponent implements OnInit {
         // Se API falhar, salvar localmente
         console.warn('⚠️ API indisponível, salvando proposta localmente:', error);
         this.salvarPropostaLocalStorage(cotacao.id, texto);
-        this.isLoading = false;
+        setTimeout(() => {
+          this.isLoading = false;
+        });
         this.snackBar.open('Proposta salva localmente! (API indisponível)', 'Fechar', {
           duration: 5000,
           horizontalPosition: 'end',
@@ -170,15 +176,20 @@ export class CotacaoListComponent implements OnInit {
 
   private salvarPropostaLocalStorage(cotacaoId: string, texto: string): void {
     const propostas = this.getPropostasLocalStorage();
+    const cotacao = this.cotacoes.find(c => c.id === cotacaoId);
     const novaProposta = {
       id: this.generateUUID(),
       cotacaoId: cotacaoId,
+      cotacaoNome: cotacao?.nome || 'Cotação',
       texto: texto,
-      dataEnvio: new Date().toISOString()
+      dataEnvio: new Date().toISOString(),
+      fornecedorEmail: this.authService.getCurrentUser()?.sub || 'Fornecedor'
     };
     propostas.push(novaProposta);
     localStorage.setItem('propostas', JSON.stringify(propostas));
-    console.log('💾 Proposta salva no localStorage');
+    console.log('💾 Proposta salva no localStorage:', novaProposta);
+    console.log('📧 Email do fornecedor:', novaProposta.fornecedorEmail);
+    console.log('📝 Nome da cotação:', novaProposta.cotacaoNome);
   }
 
   private getPropostasLocalStorage(): any[] {

@@ -1,0 +1,261 @@
+.cotacao-detail-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+  background: #f5f7fa;
+  min-height: 100vh;
+}
+
+.detail-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.back-button {
+  background: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+}
+
+.header-content h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Cards */
+.info-card, .fornecedores-card, .propostas-card {
+  margin-bottom: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+mat-card-header mat-icon[mat-card-avatar] {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Info Grid */
+.info-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.info-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.info-label {
+  font-weight: 600;
+  color: #666;
+  font-size: 14px;
+}
+
+.info-value {
+  margin: 0;
+  color: #333;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* Fornecedores */
+.fornecedores-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Propostas */
+.propostas-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.proposta-card {
+  background: white;
+  border-left: 4px solid #667eea;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.proposta-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.proposta-texto {
+  margin: 16px 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #555;
+}
+
+/* Modo Comparação */
+.comparacao-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.proposta-compare-card {
+  display: flex;
+  flex-direction: column;
+  border: 2px solid #e0e0e0;
+  transition: all 0.3s ease;
+}
+
+.proposta-compare-card:hover {
+  border-color: #667eea;
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.2);
+}
+
+.proposta-compare-card.proposta-aceita {
+  border-color: #4caf50;
+  background: #f1f8f4;
+}
+
+.compare-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+}
+
+.fornecedor-nome {
+  font-weight: 600;
+  flex: 1;
+  color: #333;
+}
+
+.status-chip-small {
+  font-size: 11px;
+  height: 24px;
+  padding: 0 8px;
+}
+
+.compare-content {
+  padding: 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.proposta-texto-compare {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #555;
+}
+
+.data-envio {
+  margin: 0;
+  font-size: 12px;
+  color: #999;
+}
+
+.compare-actions {
+  padding: 16px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* Status Classes */
+.status-aberta, .status-ABERTA {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  color: white;
+}
+
+.status-analise, .status-EM_ANALISE {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+}
+
+.status-fechada, .status-FECHADA {
+  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  color: white;
+}
+
+.status-aceita, .status-ACEITA {
+  background: #4caf50;
+  color: white;
+}
+
+.status-recusada, .status-RECUSADA {
+  background: #f44336;
+  color: white;
+}
+
+.status-cancelada, .status-CANCELADA {
+  background: #9e9e9e;
+  color: white;
+}
+
+/* Empty State */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+  gap: 16px;
+}
+
+.empty-state mat-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  color: #ccc;
+}
+
+.empty-state p {
+  margin: 0;
+  color: #999;
+  font-size: 16px;
+}
+
+/* Loading */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .info-row {
+    grid-template-columns: 1fr;
+  }
+
+  .comparacao-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .header-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

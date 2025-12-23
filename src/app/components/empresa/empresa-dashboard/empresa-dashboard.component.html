@@ -7,8 +7,13 @@
       </div>
       <div class="header-text">
         <h1>Dashboard da Empresa</h1>
-        <p>Bem-vindo, {{ currentUser?.sub || 'Empresa' }}</p>
+        <p *ngIf="empresaNome">{{ empresaNome }}</p>
+        <p *ngIf="empresaCnpj" class="header-subtitle">CNPJ: {{ empresaCnpj }}</p>
+        <p *ngIf="!empresaNome">Bem-vindo, {{ currentUser?.sub || 'Empresa' }}</p>
       </div>
+      <button mat-mini-fab color="accent" routerLink="/empresa/editar-perfil" matTooltip="Editar Perfil" class="edit-profile-btn">
+        <mat-icon>edit</mat-icon>
+      </button>
     </div>
   </div>
 
@@ -174,7 +179,7 @@
                 <mat-icon>person_add</mat-icon>
                 Convidar Fornecedores
               </button>
-              <button mat-button color="primary">
+              <button mat-button color="primary" [routerLink]="['/empresa/cotacao', cotacao.id]">
                 <mat-icon>visibility</mat-icon>
                 Ver Detalhes
               </button>

@@ -11,6 +11,10 @@ import { EmpresaDashboardComponent } from './components/empresa/empresa-dashboar
 import { ListaFornecedoresComponent } from './components/empresa/lista-fornecedores/lista-fornecedores.component';
 import { CotacaoListComponent } from './components/fornecedor/cotacao-list/cotacao-list.component';
 import { CotacaoDetailComponent } from './components/fornecedor/cotacao-detail/cotacao-detail.component';
+import { EmpresaCotacaoDetailComponent } from './components/empresa/cotacao-detail/cotacao-detail.component';
+import { EditarPerfilEmpresaComponent } from './components/empresa/editar-perfil-empresa/editar-perfil-empresa.component';
+import { EditarPerfilFornecedorComponent } from './components/fornecedor/editar-perfil-fornecedor/editar-perfil-fornecedor.component';
+import { MinhasPropostasComponent } from './components/fornecedor/minhas-propostas/minhas-propostas.component';
 import { authGuard } from './guards/auth.guard';
 import { roleGuard } from './guards/role.guard';
 import { profileCheckGuard } from './guards/profile-check.guard';
@@ -52,6 +56,18 @@ export const routes: Routes = [
     data: { roles: [Perfil.FORNECEDOR] }
   },
   { 
+    path: 'fornecedor/minhas-propostas', 
+    component: MinhasPropostasComponent,
+    canActivate: [authGuard, roleGuard, profileCheckGuard],
+    data: { roles: [Perfil.FORNECEDOR] }
+  },
+  { 
+    path: 'fornecedor/editar-perfil', 
+    component: EditarPerfilFornecedorComponent,
+    canActivate: [authGuard, roleGuard, profileCheckGuard],
+    data: { roles: [Perfil.FORNECEDOR] }
+  },
+  { 
     path: 'negociar-cotacao', 
     component: NegociarCotacaoComponent,
     canActivate: [authGuard, roleGuard, profileCheckGuard],
@@ -80,6 +96,18 @@ export const routes: Routes = [
   { 
     path: 'empresa/fornecedores', 
     component: ListaFornecedoresComponent,
+    canActivate: [authGuard, roleGuard, profileCheckGuard],
+    data: { roles: [Perfil.EMPRESA] }
+  },
+  { 
+    path: 'empresa/cotacao/:id', 
+    component: EmpresaCotacaoDetailComponent,
+    canActivate: [authGuard, roleGuard, profileCheckGuard],
+    data: { roles: [Perfil.EMPRESA] }
+  },
+  { 
+    path: 'empresa/editar-perfil', 
+    component: EditarPerfilEmpresaComponent,
     canActivate: [authGuard, roleGuard, profileCheckGuard],
     data: { roles: [Perfil.EMPRESA] }
   },

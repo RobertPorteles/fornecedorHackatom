@@ -250,6 +250,8 @@ export class CotacaoDetailComponent implements OnInit {
     propostas.push(novaProposta);
     localStorage.setItem('propostas', JSON.stringify(propostas));
     console.log('💾 Proposta salva no localStorage:', novaProposta);
+    console.log('📧 Email do fornecedor:', novaProposta.fornecedorEmail);
+    console.log('📝 Total de propostas:', propostas.length);
   }
 
   private getPropostasLocalStorage(): any[] {

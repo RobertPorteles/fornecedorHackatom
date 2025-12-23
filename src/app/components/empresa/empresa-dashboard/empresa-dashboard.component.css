@@ -19,6 +19,14 @@
   display: flex;
   align-items: center;
   gap: 20px;
+  position: relative;
+}
+
+.edit-profile-btn {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .header-icon {
@@ -49,6 +57,13 @@
   margin: 8px 0 0 0;
   opacity: 0.9;
   font-size: 16px;
+}
+
+.header-subtitle {
+  margin: 4px 0 0 0 !important;
+  opacity: 0.8 !important;
+  font-size: 14px !important;
+  font-weight: 400;
 }
 
 /* Estatísticas */

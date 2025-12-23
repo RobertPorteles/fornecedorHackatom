@@ -7,8 +7,13 @@
       </div>
       <div class="header-text">
         <h1>Dashboard do Fornecedor</h1>
-        <p>Bem-vindo, {{ currentUser?.sub || 'Fornecedor' }}</p>
+        <p *ngIf="fornecedorNome">{{ fornecedorNome }}</p>
+        <p *ngIf="fornecedorCnpj" class="header-subtitle">CNPJ: {{ fornecedorCnpj }}</p>
+        <p *ngIf="!fornecedorNome">Bem-vindo, {{ currentUser?.sub || 'Fornecedor' }}</p>
       </div>
+      <button mat-mini-fab color="accent" routerLink="/fornecedor/editar-perfil" matTooltip="Editar Perfil" class="edit-profile-btn">
+        <mat-icon>edit</mat-icon>
+      </button>
     </div>
   </div>
 
@@ -78,39 +83,16 @@
 
         <mat-card class="action-card-modern">
           <div class="action-card-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-            <mat-icon>handshake</mat-icon>
+            <mat-icon>assignment</mat-icon>
           </div>
-          <h3>Negociações</h3>
-          <p>Gerencie suas negociações em andamento</p>
-          <button mat-raised-button color="accent" routerLink="/negociar-cotacao">
-            <mat-icon>forum</mat-icon>
-            Negociar
+          <h3>Minhas Propostas</h3>
+          <p>Acompanhe o status das suas propostas enviadas</p>
+          <button mat-raised-button color="accent" [routerLink]="['/fornecedor/minhas-propostas']">
+            <mat-icon>list_alt</mat-icon>
+            Ver Propostas
           </button>
         </mat-card>
-
-        <mat-card class="action-card-modern">
-          <div class="action-card-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-            <mat-icon>add_business</mat-icon>
-          </div>
-          <h3>Cadastrar Fornecedor</h3>
-          <p>Complete seu cadastro de fornecedor</p>
-          <button mat-raised-button color="primary" routerLink="/fornecedor/cadastro">
-            <mat-icon>add</mat-icon>
-            Cadastrar
-          </button>
-        </mat-card>
-
-        <mat-card class="action-card-modern">
-          <div class="action-card-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
-            <mat-icon>settings</mat-icon>
-          </div>
-          <h3>Configurações</h3>
-          <p>Gerencie seus dados e preferências</p>
-          <button mat-raised-button color="accent">
-            <mat-icon>tune</mat-icon>
-            Configurar
-          </button>
-        </mat-card>
-      </div>
+    </div>
   </div>
 </main>
+
