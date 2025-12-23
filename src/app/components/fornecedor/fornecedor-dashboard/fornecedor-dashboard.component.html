@@ -1,96 +1,116 @@
-<div class="dashboard-container">
-  <mat-card class="welcome-card">
-    <mat-card-header>
-      <mat-icon mat-card-avatar>store</mat-icon>
-      <mat-card-title>Dashboard do Fornecedor</mat-card-title>
-      <mat-card-subtitle>Bem-vindo, {{ currentUser?.sub || 'Fornecedor' }}</mat-card-subtitle>
-    </mat-card-header>
-
-    <mat-card-content>
-      <div class="user-info">
-        <p><strong>Email:</strong> {{ currentUser?.sub }}</p>
-        <p><strong>Perfil:</strong> {{ currentUser?.perfil }}</p>
-        <p><strong>ID:</strong> {{ currentUser?.id }}</p>
+<main class="dashboard-container">
+  <!-- Header com gradiente -->
+  <div class="dashboard-header">
+    <div class="header-content">
+      <div class="header-icon">
+        <mat-icon>store</mat-icon>
       </div>
+      <div class="header-text">
+        <h1>Dashboard do Fornecedor</h1>
+        <p>Bem-vindo, {{ currentUser?.sub || 'Fornecedor' }}</p>
+      </div>
+    </div>
+  </div>
 
-      <div class="actions-grid">
-        <mat-card class="action-card">
-          <mat-card-header>
+  <!-- Estatísticas -->
+  <div class="stats-grid">
+    <mat-card class="stat-card">
+      <div class="stat-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <mat-icon>request_quote</mat-icon>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Cotações Disponíveis</span>
+        <span class="stat-value">0</span>
+      </div>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+        <mat-icon>handshake</mat-icon>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Negociações Ativas</span>
+        <span class="stat-value">0</span>
+      </div>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <div class="stat-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+        <mat-icon>check_circle</mat-icon>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Propostas Enviadas</span>
+        <span class="stat-value">0</span>
+      </div>
+    </mat-card>
+  </div>
+
+  <!-- Ações rápidas -->
+  <div class="quick-actions">
+    <h2 class="section-title">
+      <mat-icon>bolt</mat-icon>
+      Ações Rápidas
+    </h2>
+    <div class="actions-section">
+        <mat-card class="action-card-modern">
+          <div class="action-card-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
             <mat-icon>search</mat-icon>
-            <mat-card-title>Buscar Cotação</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <p>Encontre uma cotação específica usando o UUID</p>
-          </mat-card-content>
-          <mat-card-actions>
-            <button mat-raised-button color="primary" routerLink="/fornecedor/buscar-cotacao">
-              <mat-icon>search</mat-icon>
-              Buscar por UUID
-            </button>
-          </mat-card-actions>
+          </div>
+          <h3>Buscar Cotação</h3>
+          <p>Encontre uma cotação específica usando o UUID</p>
+          <button mat-raised-button color="primary" routerLink="/fornecedor/buscar-cotacao">
+            <mat-icon>search</mat-icon>
+            Buscar por UUID
+          </button>
         </mat-card>
 
-        <mat-card class="action-card">
-          <mat-card-header>
+        <mat-card class="action-card-modern">
+          <div class="action-card-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
             <mat-icon>request_quote</mat-icon>
-            <mat-card-title>Cotações Disponíveis</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <p>Visualize cotações disponíveis para responder</p>
-          </mat-card-content>
-          <mat-card-actions>
-            <button mat-raised-button color="primary" routerLink="/fornecedor/cotacoes">
-              Ver Cotações
-            </button>
-          </mat-card-actions>
+          </div>
+          <h3>Cotações Disponíveis</h3>
+          <p>Visualize cotações disponíveis para responder</p>
+          <button mat-raised-button color="primary" routerLink="/fornecedor/cotacoes">
+            <mat-icon>visibility</mat-icon>
+            Ver Cotações
+          </button>
         </mat-card>
 
-        <mat-card class="action-card">
-          <mat-card-header>
+        <mat-card class="action-card-modern">
+          <div class="action-card-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
             <mat-icon>handshake</mat-icon>
-            <mat-card-title>Negociações</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <p>Gerencie suas negociações em andamento</p>
-          </mat-card-content>
-          <mat-card-actions>
-            <button mat-raised-button color="accent" routerLink="/negociar-cotacao">
-              Negociar
-            </button>
-          </mat-card-actions>
+          </div>
+          <h3>Negociações</h3>
+          <p>Gerencie suas negociações em andamento</p>
+          <button mat-raised-button color="accent" routerLink="/negociar-cotacao">
+            <mat-icon>forum</mat-icon>
+            Negociar
+          </button>
         </mat-card>
 
-        <mat-card class="action-card">
-          <mat-card-header>
+        <mat-card class="action-card-modern">
+          <div class="action-card-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
             <mat-icon>add_business</mat-icon>
-            <mat-card-title>Cadastrar Fornecedor</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <p>Complete seu cadastro de fornecedor</p>
-          </mat-card-content>
-          <mat-card-actions>
-            <button mat-raised-button color="primary" routerLink="/fornecedor/cadastro">
-              <mat-icon>add</mat-icon>
-              Cadastrar
-            </button>
-          </mat-card-actions>
+          </div>
+          <h3>Cadastrar Fornecedor</h3>
+          <p>Complete seu cadastro de fornecedor</p>
+          <button mat-raised-button color="primary" routerLink="/fornecedor/cadastro">
+            <mat-icon>add</mat-icon>
+            Cadastrar
+          </button>
         </mat-card>
 
-        <mat-card class="action-card">
-          <mat-card-header>
+        <mat-card class="action-card-modern">
+          <div class="action-card-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
             <mat-icon>settings</mat-icon>
-            <mat-card-title>Configurações</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <p>Gerencie seus dados e preferências</p>
-          </mat-card-content>
-          <mat-card-actions>
-            <button mat-raised-button color="accent">
-              Configurar
-            </button>
-          </mat-card-actions>
+          </div>
+          <h3>Configurações</h3>
+          <p>Gerencie seus dados e preferências</p>
+          <button mat-raised-button color="accent">
+            <mat-icon>tune</mat-icon>
+            Configurar
+          </button>
         </mat-card>
       </div>
-    </mat-card-content>
-  </mat-card>
-</div>
+  </div>
+</main>

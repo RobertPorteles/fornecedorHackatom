@@ -58,6 +58,8 @@
 
 main {
   flex: 1;
-  padding: 0rem;
+  display: flex; /* Adiciona flex para o conteúdo interno */
+  flex-direction: column; /* Permite que os filhos ocupem a altura */
+  padding: 0;
   background-color: #f5f5f5;
 }
