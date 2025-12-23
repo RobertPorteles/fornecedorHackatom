@@ -1,11 +1,14 @@
-<mat-card>
-  <mat-card-header>
-    <mat-icon mat-card-avatar>store</mat-icon>
-    <mat-card-title>{{ fornecedorExistente ? 'Dados do Fornecedor' : 'Cadastrar Fornecedor' }}</mat-card-title>
-    <mat-card-subtitle>{{ fornecedorExistente ? 'Visualize e edite suas informações' : 'Preencha os dados do fornecedor' }}</mat-card-subtitle>
-  </mat-card-header>
+<main class="cadastro-fornecedor-container">
+  <mat-card class="cadastro-fornecedor-card">
+    <div class="card-header-custom">
+      <div class="header-icon">
+        <mat-icon>store</mat-icon>
+      </div>
+      <h1 class="header-title">{{ fornecedorExistente ? 'Dados do Fornecedor' : 'Cadastrar Fornecedor' }}</h1>
+      <p class="header-subtitle">{{ fornecedorExistente ? 'Visualize e edite suas informações' : 'Preencha os dados do fornecedor' }}</p>
+    </div>
 
-  <mat-card-content>
+    <mat-card-content>
     <!-- Dados Somente Leitura (se fornecedor existente) -->
     <div *ngIf="fornecedorExistente && cadastroResponse" class="readonly-section">
       <h3>Dados Cadastrados</h3>
