@@ -75,14 +75,51 @@ export class ListaFornecedoresComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.carregarFornecedores();
+    // Primeiro tenta carregar do localStorage
+    const temDados = this.carregarDoLocalStorage();
+    // Depois tenta carregar da API (em background se já tem dados)
+    this.carregarFornecedores(!temDados);
   }
 
-  carregarFornecedores(): void {
-    this.isLoading = true;
+  carregarDoLocalStorage(): boolean {
+    const fornecedoresMock = localStorage.getItem('fornecedores');
+    if (fornecedoresMock) {
+      console.log('📦 Carregando fornecedores do localStorage');
+      this.fornecedoresCompletos = JSON.parse(fornecedoresMock);
+      this.fornecedores = this.fornecedoresCompletos.map(f => ({
+        id: f.id,
+        nome: f.nome,
+        cnpj: f.cnpj,
+        telefone: f.telefone,
+        cidade: f.endereco?.cidade || 'N/A',
+        estado: f.endereco?.estado || 'N/A'
+      }));
+      this.fornecedoresFiltrados = [...this.fornecedores];
+      this.primeiroFornecedor = this.fornecedoresCompletos.length > 0 
+        ? this.fornecedoresCompletos[0] 
+        : null;
+      return true;
+    }
+    return false;
+  }
+
+  carregarFornecedores(mostrarLoading: boolean = true): void {
+    if (mostrarLoading) {
+      this.isLoading = true;
+    }
+    
+    // Timeout de segurança para garantir que o loading não fique travado
+    const timeout = setTimeout(() => {
+      if (this.isLoading) {
+        this.isLoading = false;
+        console.warn('⚠️ Timeout ao carregar fornecedores');
+        this.carregarDoLocalStorage();
+      }
+    }, 5000);
+    
     this.fornecedorService.listarFornecedores().subscribe({
       next: (response: any) => {
-        setTimeout(() => {
+          clearTimeout(timeout);
           this.isLoading = false;
           console.log('✅ Fornecedores carregados:', response);
           
@@ -109,6 +146,9 @@ export class ListaFornecedoresComponent implements OnInit {
             }));
           }
           
+          // Salvar no localStorage
+          localStorage.setItem('fornecedores', JSON.stringify(this.fornecedoresCompletos));
+          
           this.fornecedoresFiltrados = [...this.fornecedores];
           
           // Selecionar o primeiro fornecedor ou null
@@ -123,12 +163,24 @@ export class ListaFornecedoresComponent implements OnInit {
               duration: 3000
             });
           }
-        }, 0);
       },
       error: (error) => {
-        setTimeout(() => {
+          clearTimeout(timeout);
           this.isLoading = false;
           console.error('❌ Erro ao carregar fornecedores:', error);
+          
+          // Tentar carregar dados mockados do localStorage
+          this.carregarDoLocalStorage();
+          
+          if (this.fornecedores.length > 0) {
+            this.snackBar.open('Dados carregados do cache local (modo offline)', 'Fechar', {
+              duration: 5000,
+              horizontalPosition: 'end',
+              verticalPosition: 'top',
+              panelClass: ['warning-snackbar']
+            });
+            return;
+          }
         
         let errorMessage = 'Erro ao carregar fornecedores.';
         
@@ -153,7 +205,6 @@ export class ListaFornecedoresComponent implements OnInit {
           verticalPosition: 'top',
           panelClass: ['error-snackbar']
         });
-        }, 0);
       }
     });
   }
