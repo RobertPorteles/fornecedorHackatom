@@ -78,6 +78,10 @@
               <div class="cotacao-info">
                 <p><strong>Prazo:</strong> {{ cotacao.prazoResposta | date: 'dd/MM/yyyy' }}</p>
                 <p><strong>Criado em:</strong> {{ formatarData(cotacao.dataCreated) }}</p>
+                <p *ngIf="getNumeroFornecedoresConvidados(cotacao.id) > 0">
+                  <mat-icon style="vertical-align: middle; font-size: 18px; width: 18px; height: 18px;">people</mat-icon>
+                  <strong>Fornecedores convidados:</strong> {{ getNumeroFornecedoresConvidados(cotacao.id) }}
+                </p>
               </div>
 
               <!-- Propostas Recebidas -->
@@ -121,6 +125,10 @@
             </mat-card-content>
 
             <mat-card-actions>
+              <button mat-button color="accent" (click)="convidarFornecedores(cotacao)">
+                <mat-icon>person_add</mat-icon>
+                Convidar Fornecedores
+              </button>
               <button mat-button color="primary">
                 <mat-icon>visibility</mat-icon>
                 Ver Detalhes

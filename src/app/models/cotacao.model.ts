@@ -31,6 +31,10 @@ export interface SolicitarCotacaoRequest {
   texto: string;
 }
 
+export interface ConvidarFornecedoresRequest {
+  fornecedoresIds: string[]; // Array de UUIDs dos fornecedores
+}
+
 // Response Types
 export interface CadastrarCotacaoResponse {
   id: string;
@@ -67,6 +71,12 @@ export interface SolicitarCotacaoResponse {
   id: string;
   idCotacao: string;
   texto: string;
+}
+
+export interface ConvidarFornecedoresResponse {
+  cotacaoId: string;
+  fornecedoresConvidados: string[];
+  mensagem: string;
 }
 
 export interface EnderecoResponse {

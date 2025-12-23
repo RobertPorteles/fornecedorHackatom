@@ -54,65 +54,69 @@ export class LoginComponent {
       
       this.authService.login(credentials).subscribe({
         next: (response) => {
-          this.isLoading = false;
-          console.log('✅ Login bem-sucedido');
-          this.snackBar.open('Login realizado com sucesso!', 'Fechar', {
-            duration: 3000,
-            horizontalPosition: 'end',
-            verticalPosition: 'top',
-            panelClass: ['success-snackbar']
-          });
-          
-          // Redirecionar baseado no perfil do usuário
-          const currentUser = this.authService.getCurrentUser();
-          if (currentUser) {
-            if (this.authService.isFornecedor()) {
-              this.router.navigate(['/fornecedor/dashboard']);
-            } else if (this.authService.isEmpresa()) {
-              this.router.navigate(['/empresa/dashboard']);
+          setTimeout(() => {
+            this.isLoading = false;
+            console.log('✅ Login bem-sucedido');
+            this.snackBar.open('Login realizado com sucesso!', 'Fechar', {
+              duration: 3000,
+              horizontalPosition: 'end',
+              verticalPosition: 'top',
+              panelClass: ['success-snackbar']
+            });
+            
+            // Redirecionar baseado no perfil do usuário
+            const currentUser = this.authService.getCurrentUser();
+            if (currentUser) {
+              if (this.authService.isFornecedor()) {
+                this.router.navigate(['/fornecedor/dashboard']);
+              } else if (this.authService.isEmpresa()) {
+                this.router.navigate(['/empresa/dashboard']);
+              } else {
+                // Fallback caso o perfil não seja reconhecido
+                this.router.navigate(['/']);
+              }
             } else {
-              // Fallback caso o perfil não seja reconhecido
               this.router.navigate(['/']);
             }
-          } else {
-            this.router.navigate(['/']);
-          }
+          }, 0);
         },
         error: (error) => {
-          this.isLoading = false;
-          console.error('❌ Erro completo:', error);
+          setTimeout(() => {
+            this.isLoading = false;
+            console.error('❌ Erro completo:', error);
           
-          let errorMessage = 'Erro ao realizar login.';
+            let errorMessage = 'Erro ao realizar login.';
           
-          if (error.status === 500) {
-            errorMessage = '⚠️ Erro no servidor (500). Verifique o console do backend para mais detalhes.';
-            console.error('🔥 ERRO 500 - Detalhes:', {
-              timestamp: error.error?.timestamp,
-              error: error.error?.error,
-              path: error.error?.path,
-              message: error.error?.message
+            if (error.status === 500) {
+              errorMessage = '⚠️ Erro no servidor (500). Verifique o console do backend para mais detalhes.';
+              console.error('🔥 ERRO 500 - Detalhes:', {
+                timestamp: error.error?.timestamp,
+                error: error.error?.error,
+                path: error.error?.path,
+                message: error.error?.message
+              });
+              console.error('💡 VERIFIQUE NO BACKEND:');
+              console.error('   1. Usuário existe no banco de dados?');
+              console.error('   2. Senha está sendo validada corretamente?');
+              console.error('   3. JWT está configurado?');
+              console.error('   4. Veja o stack trace no console do Spring Boot');
+            } else if (error.status === 401) {
+              errorMessage = 'Email ou senha incorretos.';
+            } else if (error.status === 404) {
+              errorMessage = 'Endpoint não encontrado no servidor.';
+            } else if (error.status === 0) {
+              errorMessage = 'Não foi possível conectar ao servidor.';
+            } else if (error.error?.message) {
+              errorMessage = error.error.message;
+            }
+          
+            this.snackBar.open(errorMessage, 'Fechar', {
+              duration: 8000,
+              horizontalPosition: 'end',
+              verticalPosition: 'top',
+              panelClass: ['error-snackbar']
             });
-            console.error('💡 VERIFIQUE NO BACKEND:');
-            console.error('   1. Usuário existe no banco de dados?');
-            console.error('   2. Senha está sendo validada corretamente?');
-            console.error('   3. JWT está configurado?');
-            console.error('   4. Veja o stack trace no console do Spring Boot');
-          } else if (error.status === 401) {
-            errorMessage = 'Email ou senha incorretos.';
-          } else if (error.status === 404) {
-            errorMessage = 'Endpoint não encontrado no servidor.';
-          } else if (error.status === 0) {
-            errorMessage = 'Não foi possível conectar ao servidor.';
-          } else if (error.error?.message) {
-            errorMessage = error.error.message;
-          }
-          
-          this.snackBar.open(errorMessage, 'Fechar', {
-            duration: 8000,
-            horizontalPosition: 'end',
-            verticalPosition: 'top',
-            panelClass: ['error-snackbar']
-          });
+          }, 0);
         }
       });
     } else {

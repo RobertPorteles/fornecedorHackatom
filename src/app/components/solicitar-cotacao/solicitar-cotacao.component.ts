@@ -47,7 +47,8 @@ export class SolicitarCotacaoComponent {
     this.informacoesForm = this.fb.group({
       nome: ['', [Validators.required, Validators.minLength(5)]],
       descricao: ['', [Validators.required, Validators.minLength(10)]],
-      prazoResposta: ['', Validators.required]
+      prazoResposta: ['', Validators.required],
+      valor: ['', [Validators.required, Validators.min(0.01)]]
     });
 
     this.propostaForm = this.fb.group({
@@ -151,6 +152,9 @@ export class SolicitarCotacaoComponent {
     if (field?.hasError('minlength')) {
       const minLength = field.errors?.['minlength'].requiredLength;
       return `Mínimo de ${minLength} caracteres`;
+    }
+    if (field?.hasError('min')) {
+      return 'O valor deve ser maior que zero';
     }
     return '';
   }

@@ -14,7 +14,9 @@ import {
   SolicitarCotacaoRequest,
   SolicitarCotacaoResponse,
   BuscarFornecedorResponse,
-  StatusCotacao
+  StatusCotacao,
+  ConvidarFornecedoresRequest,
+  ConvidarFornecedoresResponse
 } from '../models/cotacao.model';
 
 export interface Cotacao {
@@ -253,5 +255,69 @@ export class CotacaoService {
     return this.http.get<Cotacao>(
       `${this.apiUrlFornecedor}/api/v1/cotacao/${id}`
     );
+  }
+
+  /**
+   * POST /api/v1/cotacao/{id}/convidar - Convidar fornecedores para cotação (MOCK)
+   * Mock para desenvolvimento sem backend
+   */
+  convidarFornecedores(
+    cotacaoId: string, 
+    fornecedoresIds: string[]
+  ): Observable<ConvidarFornecedoresResponse> {
+    console.log(`📧 [MOCK] Convidando fornecedores para cotação ${cotacaoId}:`, fornecedoresIds);
+    
+    // Validações
+    if (!this.validarUUID(cotacaoId)) {
+      return throwError(() => new Error('ID da cotação inválido'));
+    }
+
+    if (!fornecedoresIds || fornecedoresIds.length === 0) {
+      return throwError(() => new Error('Selecione ao menos um fornecedor'));
+    }
+
+    // Validar cada UUID de fornecedor
+    const idsInvalidos = fornecedoresIds.filter(id => !this.validarUUID(id));
+    if (idsInvalidos.length > 0) {
+      return throwError(() => new Error(`IDs de fornecedores inválidos: ${idsInvalidos.join(', ')}`));
+    }
+
+    // MOCK: Simular resposta do backend
+    // Em produção, descomentar a linha abaixo:
+    // return this.http.post<ConvidarFornecedoresResponse>(
+    //   `${this.apiUrlEmpresa}/api/v1/cotacao/${cotacaoId}/convidar`,
+    //   { fornecedoresIds }
+    // ).pipe(catchError(this.handleError));
+
+    // Simular delay de rede
+    return new Observable<ConvidarFornecedoresResponse>(observer => {
+      setTimeout(() => {
+        // Salvar convites no localStorage
+        const convitesKey = `convites_${cotacaoId}`;
+        const convitesExistentes = JSON.parse(localStorage.getItem(convitesKey) || '[]');
+        const novosConvites = [...new Set([...convitesExistentes, ...fornecedoresIds])];
+        localStorage.setItem(convitesKey, JSON.stringify(novosConvites));
+        
+        console.log('✅ [MOCK] Fornecedores convidados salvos no localStorage:', novosConvites);
+
+        const response: ConvidarFornecedoresResponse = {
+          cotacaoId: cotacaoId,
+          fornecedoresConvidados: novosConvites,
+          mensagem: `${fornecedoresIds.length} fornecedor(es) convidado(s) com sucesso!`
+        };
+
+        observer.next(response);
+        observer.complete();
+      }, 500); // Simular 500ms de latência
+    });
+  }
+
+  /**
+   * GET - Listar fornecedores convidados para uma cotação (MOCK)
+   * Recupera do localStorage
+   */
+  listarFornecedoresConvidados(cotacaoId: string): string[] {
+    const convitesKey = `convites_${cotacaoId}`;
+    return JSON.parse(localStorage.getItem(convitesKey) || '[]');
   }
 }

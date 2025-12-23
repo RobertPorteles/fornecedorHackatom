@@ -1,0 +1,95 @@
+<div class="dialog-container">
+  <h2 mat-dialog-title>
+    <mat-icon>person_add</mat-icon>
+    Convidar Fornecedores
+  </h2>
+  
+  <div class="cotacao-info">
+    <p><strong>Cotação:</strong> {{ data.cotacaoNome }}</p>
+    <mat-divider></mat-divider>
+  </div>
+  
+  <mat-dialog-content>
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Carregando fornecedores...</p>
+    </div>
+    
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && fornecedores.length === 0" class="empty-state">
+      <mat-icon>inbox</mat-icon>
+      <p>Nenhum fornecedor disponível</p>
+      <small>Cadastre fornecedores antes de criar convites</small>
+    </div>
+    
+    <!-- Fornecedores List -->
+    <div *ngIf="!isLoading && fornecedores.length > 0" class="fornecedores-container">
+      <p class="instrucao">
+        <mat-icon>info</mat-icon>
+        Selecione os fornecedores que deseja convidar para esta cotação
+      </p>
+      
+      <mat-selection-list #fornecedoresList class="fornecedores-list">
+        <mat-list-option 
+          *ngFor="let fornecedor of fornecedores" 
+          [value]="fornecedor.id"
+          [disabled]="jaFoiConvidado(fornecedor.id)"
+          [class.ja-convidado]="jaFoiConvidado(fornecedor.id)">
+          
+          <div class="fornecedor-item">
+            <div class="fornecedor-header">
+              <mat-icon class="fornecedor-icon">business</mat-icon>
+              <div class="fornecedor-info">
+                <strong class="fornecedor-nome">{{ fornecedor.nome }}</strong>
+                <span class="fornecedor-badge" *ngIf="jaFoiConvidado(fornecedor.id)">
+                  <mat-icon>check_circle</mat-icon>
+                  Já convidado
+                </span>
+              </div>
+            </div>
+            <div class="fornecedor-details">
+              <small>
+                <mat-icon class="detail-icon">credit_card</mat-icon>
+                {{ fornecedor.cnpj }}
+              </small>
+              <small>
+                <mat-icon class="detail-icon">phone</mat-icon>
+                {{ fornecedor.telefone }}
+              </small>
+              <small>
+                <mat-icon class="detail-icon">location_on</mat-icon>
+                {{ fornecedor.cidade }}/{{ fornecedor.estado }}
+              </small>
+            </div>
+          </div>
+        </mat-list-option>
+      </mat-selection-list>
+
+      <div class="selecao-info" *ngIf="getNumeroSelecionados() > 0">
+        <mat-icon>check_circle</mat-icon>
+        <span>{{ getNumeroSelecionados() }} fornecedor(es) selecionado(s)</span>
+      </div>
+    </div>
+  </mat-dialog-content>
+  
+  <mat-dialog-actions align="end">
+    <button 
+      mat-button 
+      (click)="cancelar()"
+      [disabled]="enviandoConvites">
+      <mat-icon>close</mat-icon>
+      Cancelar
+    </button>
+    
+    <button 
+      mat-raised-button 
+      color="primary" 
+      (click)="convidar()"
+      [disabled]="isLoading || enviandoConvites || getNumeroSelecionados() === 0">
+      <mat-icon *ngIf="!enviandoConvites">send</mat-icon>
+      <mat-spinner *ngIf="enviandoConvites" diameter="20"></mat-spinner>
+      {{ enviandoConvites ? 'Enviando...' : 'Convidar (' + getNumeroSelecionados() + ')' }}
+    </button>
+  </mat-dialog-actions>
+</div>

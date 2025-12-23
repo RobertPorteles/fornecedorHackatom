@@ -22,6 +22,24 @@ export interface FornecedorResumo {
   estado: string;
 }
 
+export interface FornecedorCompleto {
+  id: string;
+  nome: string;
+  cnpj: string;
+  telefone: string;
+  endereco: {
+    logradouro: string;
+    numero: string;
+    complemento?: string;
+    bairro: string;
+    cidade: string;
+    estado: string;
+    cep: string;
+  };
+  contatos: string[];
+  usuarioId?: string;
+}
+
 @Component({
   selector: 'app-lista-fornecedores',
   standalone: true,
@@ -44,6 +62,8 @@ export interface FornecedorResumo {
 export class ListaFornecedoresComponent implements OnInit {
   fornecedores: FornecedorResumo[] = [];
   fornecedoresFiltrados: FornecedorResumo[] = [];
+  fornecedoresCompletos: FornecedorCompleto[] = [];
+  primeiroFornecedor: FornecedorCompleto | null = null;
   isLoading = false;
   filtro = '';
   displayedColumns: string[] = ['nome', 'cnpj', 'telefone', 'localizacao', 'acoes'];
@@ -62,41 +82,53 @@ export class ListaFornecedoresComponent implements OnInit {
     this.isLoading = true;
     this.fornecedorService.listarFornecedores().subscribe({
       next: (response: any) => {
-        this.isLoading = false;
-        console.log('✅ Fornecedores carregados:', response);
-        
-        // Mapear resposta para FornecedorResumo
-        if (Array.isArray(response)) {
-          this.fornecedores = response.map(f => ({
-            id: f.id,
-            nome: f.nome,
-            cnpj: f.cnpj,
-            telefone: f.telefone,
-            cidade: f.endereco?.cidade || 'N/A',
-            estado: f.endereco?.estado || 'N/A'
-          }));
-        } else if (response.fornecedores) {
-          this.fornecedores = response.fornecedores.map((f: any) => ({
-            id: f.id,
-            nome: f.nome,
-            cnpj: f.cnpj,
-            telefone: f.telefone,
-            cidade: f.cidade || f.endereco?.cidade || 'N/A',
-            estado: f.estado || f.endereco?.estado || 'N/A'
-          }));
-        }
-        
-        this.fornecedoresFiltrados = [...this.fornecedores];
-        
-        if (this.fornecedores.length === 0) {
-          this.snackBar.open('Nenhum fornecedor cadastrado', 'Fechar', {
-            duration: 3000
-          });
-        }
+        setTimeout(() => {
+          this.isLoading = false;
+          console.log('✅ Fornecedores carregados:', response);
+          
+          // Mapear resposta para FornecedorResumo
+          if (Array.isArray(response)) {
+            this.fornecedoresCompletos = response;
+            this.fornecedores = response.map(f => ({
+              id: f.id,
+              nome: f.nome,
+              cnpj: f.cnpj,
+              telefone: f.telefone,
+              cidade: f.endereco?.cidade || 'N/A',
+              estado: f.endereco?.estado || 'N/A'
+            }));
+          } else if (response.fornecedores) {
+            this.fornecedoresCompletos = response.fornecedores;
+            this.fornecedores = response.fornecedores.map((f: any) => ({
+              id: f.id,
+              nome: f.nome,
+              cnpj: f.cnpj,
+              telefone: f.telefone,
+              cidade: f.cidade || f.endereco?.cidade || 'N/A',
+              estado: f.estado || f.endereco?.estado || 'N/A'
+            }));
+          }
+          
+          this.fornecedoresFiltrados = [...this.fornecedores];
+          
+          // Selecionar o primeiro fornecedor ou null
+          this.primeiroFornecedor = this.fornecedoresCompletos.length > 0 
+            ? this.fornecedoresCompletos[0] 
+            : null;
+          
+          console.log('📋 Primeiro fornecedor:', this.primeiroFornecedor);
+          
+          if (this.fornecedores.length === 0) {
+            this.snackBar.open('Nenhum fornecedor cadastrado', 'Fechar', {
+              duration: 3000
+            });
+          }
+        }, 0);
       },
       error: (error) => {
-        this.isLoading = false;
-        console.error('❌ Erro ao carregar fornecedores:', error);
+        setTimeout(() => {
+          this.isLoading = false;
+          console.error('❌ Erro ao carregar fornecedores:', error);
         
         let errorMessage = 'Erro ao carregar fornecedores.';
         
@@ -121,6 +153,7 @@ export class ListaFornecedoresComponent implements OnInit {
           verticalPosition: 'top',
           panelClass: ['error-snackbar']
         });
+        }, 0);
       }
     });
   }

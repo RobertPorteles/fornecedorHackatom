@@ -1,4 +1,75 @@
 <div class="lista-container">
+  <!-- Formulário do Primeiro Fornecedor -->
+  <mat-card class="primeiro-fornecedor-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar>account_circle</mat-icon>
+      <mat-card-title>Primeiro Fornecedor</mat-card-title>
+      <mat-card-subtitle>Dados completos do primeiro fornecedor cadastrado</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div *ngIf="primeiroFornecedor" class="fornecedor-form">
+        <div class="info-grid">
+          <div class="info-item">
+            <strong>ID:</strong>
+            <span>{{ primeiroFornecedor.id }}</span>
+          </div>
+          <div class="info-item">
+            <strong>Nome:</strong>
+            <span>{{ primeiroFornecedor.nome }}</span>
+          </div>
+          <div class="info-item">
+            <strong>CNPJ:</strong>
+            <span>{{ formatarCNPJ(primeiroFornecedor.cnpj) }}</span>
+          </div>
+          <div class="info-item">
+            <strong>Telefone:</strong>
+            <span>{{ formatarTelefone(primeiroFornecedor.telefone) }}</span>
+          </div>
+          <div class="info-item full-width">
+            <strong>Endereço:</strong>
+            <span>
+              {{ primeiroFornecedor.endereco.logradouro }}, {{ primeiroFornecedor.endereco.numero }}
+              <span *ngIf="primeiroFornecedor.endereco.complemento"> - {{ primeiroFornecedor.endereco.complemento }}</span>
+            </span>
+          </div>
+          <div class="info-item">
+            <strong>Bairro:</strong>
+            <span>{{ primeiroFornecedor.endereco.bairro }}</span>
+          </div>
+          <div class="info-item">
+            <strong>Cidade/UF:</strong>
+            <span>{{ primeiroFornecedor.endereco.cidade }} - {{ primeiroFornecedor.endereco.estado }}</span>
+          </div>
+          <div class="info-item">
+            <strong>CEP:</strong>
+            <span>{{ primeiroFornecedor.endereco.cep }}</span>
+          </div>
+          <div class="info-item full-width">
+            <strong>Contatos:</strong>
+            <span *ngIf="primeiroFornecedor.contatos && primeiroFornecedor.contatos.length > 0">
+              {{ primeiroFornecedor.contatos.join(', ') }}
+            </span>
+            <span *ngIf="!primeiroFornecedor.contatos || primeiroFornecedor.contatos.length === 0">
+              Nenhum contato cadastrado
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="!primeiroFornecedor && !isLoading" class="null-state">
+        <mat-icon>info</mat-icon>
+        <p><strong>null</strong></p>
+        <small>Nenhum fornecedor encontrado</small>
+      </div>
+
+      <div *ngIf="isLoading" class="loading-inline">
+        <mat-spinner diameter="30"></mat-spinner>
+        <span>Carregando...</span>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
   <mat-card>
     <mat-card-header>
       <mat-icon mat-card-avatar>people</mat-icon>

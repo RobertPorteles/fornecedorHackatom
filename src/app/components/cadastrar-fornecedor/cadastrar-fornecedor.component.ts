@@ -143,27 +143,29 @@ export class CadastrarFornecedorComponent implements OnInit {
     this.fornecedorService.getFornecedorMe().subscribe({
       next: (response) => {
         console.log('✅ Fornecedor já cadastrado:', response);
-        this.fornecedorExistente = true;
-        this.cadastroResponse = response;
-        
-        // Popular formulário com dados existentes
-        this.fornecedorForm.patchValue({
-          nome: response.nome,
-          cnpj: response.cnpj,
-          telefone: response.telefone,
-          endereco: response.endereco
-        });
+        setTimeout(() => {
+          this.fornecedorExistente = true;
+          this.cadastroResponse = response;
+          
+          // Popular formulário com dados existentes
+          this.fornecedorForm.patchValue({
+            nome: response.nome,
+            cnpj: response.cnpj,
+            telefone: response.telefone,
+            endereco: response.endereco
+          });
 
-        // Popular contatos
-        this.contatos.clear();
-        response.contatos.forEach(contato => {
-          this.contatos.push(this.fb.control(contato, [Validators.required, Validators.email]));
-        });
+          // Popular contatos
+          this.contatos.clear();
+          response.contatos.forEach(contato => {
+            this.contatos.push(this.fb.control(contato, [Validators.required, Validators.email]));
+          });
 
-        this.snackBar.open('Dados do fornecedor carregados com sucesso', 'Fechar', {
-          duration: 3000,
-          panelClass: ['success-snackbar']
-        });
+          this.snackBar.open('Dados do fornecedor carregados com sucesso', 'Fechar', {
+            duration: 3000,
+            panelClass: ['success-snackbar']
+          });
+        }, 0);
       },
       error: (error) => {
         if (error.status === 404) {
@@ -209,37 +211,45 @@ export class CadastrarFornecedorComponent implements OnInit {
       
       this.fornecedorService.cadastrarFornecedor(request).subscribe({
         next: (response) => {
-          this.isLoading = false;
-          this.cadastroResponse = response;
-          console.log('✅ Fornecedor cadastrado com sucesso:', response);
-          this.snackBar.open(
-            `Fornecedor cadastrado com sucesso! ID: ${response.id}`,
-            'Fechar',
-            {
-              duration: 5000,
-              horizontalPosition: 'end',
-              verticalPosition: 'top',
-              panelClass: ['success-snackbar']
-            }
-          );
-          
-          // Marcar como existente e popular dados somente leitura
-          this.fornecedorExistente = true;
-          
-          // Redirecionar para dashboard após sucesso
           setTimeout(() => {
-            this.router.navigate(['/fornecedor/dashboard']);
-          }, 2000);
+            this.isLoading = false;
+            this.cadastroResponse = response;
+            this.fornecedorExistente = true;
+            
+            console.log('✅ Fornecedor cadastrado com sucesso:', response);
+            
+            this.snackBar.open(
+              `Fornecedor cadastrado com sucesso! ID: ${response.id}`,
+              'Fechar',
+              {
+                duration: 5000,
+                horizontalPosition: 'end',
+                verticalPosition: 'top',
+                panelClass: ['success-snackbar']
+              }
+            );
+            
+            // Redirecionar para dashboard após sucesso
+            setTimeout(() => {
+              this.router.navigate(['/fornecedor/dashboard']);
+            }, 2000);
+          }, 0);
         },
         error: (error) => {
-          this.isLoading = false;
           console.error('❌ Erro completo:', error);
+          console.error('❌ Status:', error.status);
+          console.error('❌ Mensagem do backend:', error.error);
           
-          let errorMessage = 'Erro ao cadastrar fornecedor.';
+          setTimeout(() => {
+            this.isLoading = false;
+            
+            let errorMessage = 'Erro ao cadastrar fornecedor.';
           
           if (error.status === 409) {
             errorMessage = 'CNPJ já cadastrado no sistema.';
           } else if (error.status === 400) {
+            // Logar detalhes do erro 400
+            console.error('🔴 ERRO 400 - Detalhes:', error.error);
             if (error.error?.message?.includes('já possui')) {
               errorMessage = 'Você já possui um fornecedor cadastrado.';
             } else {
@@ -269,6 +279,7 @@ export class CadastrarFornecedorComponent implements OnInit {
             verticalPosition: 'top',
             panelClass: ['error-snackbar']
           });
+          }, 0);
         }
       });
     } else {

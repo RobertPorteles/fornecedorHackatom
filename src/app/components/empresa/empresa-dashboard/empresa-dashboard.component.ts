@@ -6,9 +6,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
+import { CotacaoService } from '../../../services/cotacao.service';
 import { JwtPayload } from '../../../models/perfil.model';
+import { ConvidarFornecedoresDialogComponent } from '../convidar-fornecedores-dialog/convidar-fornecedores-dialog.component';
 
 interface Cotacao {
   id: string;
@@ -43,7 +46,9 @@ export class EmpresaDashboardComponent implements OnInit {
 
   constructor(
     public authService: AuthService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog,
+    private cotacaoService: CotacaoService
   ) {}
 
   ngOnInit(): void {
@@ -120,5 +125,37 @@ export class EmpresaDashboardComponent implements OnInit {
       verticalPosition: 'top',
       panelClass: ['info-snackbar']
     });
+  }
+
+  /**
+   * Abrir dialog para convidar fornecedores para uma cotação
+   */
+  convidarFornecedores(cotacao: Cotacao): void {
+    const dialogRef = this.dialog.open(ConvidarFornecedoresDialogComponent, {
+      width: '700px',
+      maxWidth: '90vw',
+      data: {
+        cotacaoId: cotacao.id,
+        cotacaoNome: cotacao.nome
+      },
+      disableClose: false,
+      autoFocus: true
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log('✅ Fornecedores convidados para cotação', cotacao.id);
+        // Recarregar dados se necessário
+      } else {
+        console.log('❌ Convite cancelado');
+      }
+    });
+  }
+
+  /**
+   * Contar quantos fornecedores foram convidados para uma cotação
+   */
+  getNumeroFornecedoresConvidados(cotacaoId: string): number {
+    return this.cotacaoService.listarFornecedoresConvidados(cotacaoId).length;
   }
 }

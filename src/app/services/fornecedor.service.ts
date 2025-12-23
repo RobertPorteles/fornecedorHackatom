@@ -18,6 +18,7 @@ import {
 })
 export class FornecedorService {
   private apiUrl = environment.fornecedorApiUrl;
+  private empresaApiUrl = environment.empresaApiUrl;
 
   constructor(private http: HttpClient) {}
 
@@ -29,7 +30,7 @@ export class FornecedorService {
 
   getEmpresaMe(): Observable<any> {
     return this.http.get<any>(
-      `${this.apiUrl}/api/v1/empresa/me`
+      `${this.empresaApiUrl}/api/v1/empresa/me`
     );
   }
 
@@ -56,7 +57,7 @@ export class FornecedorService {
 
   listarFornecedores(): Observable<any> {
     return this.http.get<any>(
-      `${this.apiUrl}/api/v1/fornecedor/listar`
+      `${this.apiUrl}/api/v1/fornecedor/all`
     );
   }
 }

@@ -8,6 +8,99 @@ mat-card {
   margin: 20px 0;
 }
 
+/* Formulário do Primeiro Fornecedor */
+.primeiro-fornecedor-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.primeiro-fornecedor-card mat-card-header {
+  margin-bottom: 20px;
+}
+
+.primeiro-fornecedor-card .mat-mdc-card-title,
+.primeiro-fornecedor-card .mat-mdc-card-subtitle {
+  color: white !important;
+}
+
+.fornecedor-form {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info-item.full-width {
+  grid-column: 1 / -1;
+}
+
+.info-item strong {
+  color: #666;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-item span {
+  color: #333;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.null-state {
+  text-align: center;
+  padding: 40px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+}
+
+.null-state mat-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  color: rgba(0,0,0,0.3);
+  margin-bottom: 12px;
+}
+
+.null-state p {
+  margin: 8px 0;
+  font-size: 24px;
+  font-family: 'Courier New', monospace;
+  color: rgba(0,0,0,0.6);
+}
+
+.null-state small {
+  color: rgba(0,0,0,0.5);
+  font-size: 14px;
+}
+
+.loading-inline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 30px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+}
+
+.loading-inline span {
+  color: rgba(0,0,0,0.6);
+  font-size: 14px;
+}
+
 .filtro-section {
   display: flex;
   gap: 15px;
