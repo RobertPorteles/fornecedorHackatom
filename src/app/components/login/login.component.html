@@ -1,13 +1,16 @@
-<div class="login-container">
+<main class="login-container">
   <mat-card class="login-card">
-    <mat-card-header>
-      <mat-card-title>Portal Hackatom</mat-card-title>
-      <mat-card-subtitle>Faça login para continuar</mat-card-subtitle>
-    </mat-card-header>
+    <div class="card-header-custom">
+      <div class="header-icon">
+        <mat-icon>login</mat-icon>
+      </div>
+      <h1 class="header-title">Portal Hackatom</h1>
+      <p class="header-subtitle">Faça login para continuar</p>
+    </div>
 
     <mat-card-content>
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-        <mat-form-field appearance="fill" class="full-width">
+        <mat-form-field appearance="outline" class="full-width">
           <mat-label>Email</mat-label>
           <input 
             matInput 
@@ -21,7 +24,7 @@
           </mat-error>
         </mat-form-field>
 
-        <mat-form-field appearance="fill" class="full-width">
+        <mat-form-field appearance="outline" class="full-width">
           <mat-label>Senha</mat-label>
           <input 
             matInput 
@@ -48,10 +51,11 @@
             mat-raised-button 
             color="primary" 
             type="submit" 
-            class="login-button"
+            class="full-width"
             [disabled]="!loginForm.valid || isLoading">
-            <span *ngIf="!isLoading">Entrar</span>
-            <span *ngIf="isLoading">Entrando...</span>
+            <mat-icon *ngIf="!isLoading">login</mat-icon>
+            <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+            {{ isLoading ? 'Entrando...' : 'Entrar' }}
           </button>
         </div>
 
@@ -64,4 +68,4 @@
       </form>
     </mat-card-content>
   </mat-card>
-</div>
+</main>

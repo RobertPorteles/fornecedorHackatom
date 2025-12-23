@@ -1,34 +1,87 @@
 .login-container {
   display: flex;
+  flex: 1;
   justify-content: center;
   align-items: center;
-  min-height: 80vh;
-  padding: 20px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 0rem;
+  background-color: #f5f5f5;
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .login-card {
-  max-width: 450px;
+  max-width: 480px;
   width: 100%;
-  padding: 20px;
+  padding: 0;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.6s ease-out;
 }
 
-mat-card-header {
-  display: flex;
-  flex-direction: column;
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.card-header-custom {
+  text-align: center;
+  padding: 40px 30px 30px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 16px 16px 0 0;
+}
+
+.header-icon {
+  display: inline-flex;
   align-items: center;
-  margin-bottom: 30px;
+  justify-content: center;
+  width: 70px;
+  height: 70px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  margin-bottom: 16px;
+  backdrop-filter: blur(10px);
 }
 
-mat-card-title {
-  font-size: 28px;
-  font-weight: 500;
-  color: #3f51b5;
-  margin-bottom: 8px;
+.header-icon mat-icon {
+  font-size: 40px;
+  width: 40px;
+  height: 40px;
+  color: white;
 }
 
-mat-card-subtitle {
+.header-title {
+  font-size: 32px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  letter-spacing: 0.5px;
+}
+
+.header-subtitle {
   font-size: 16px;
-  color: #666;
+  margin: 0;
+  opacity: 0.95;
+  font-weight: 300;
+}
+
+mat-card-content {
+  padding: 40px 30px 30px !important;
 }
 
 .full-width {
@@ -36,16 +89,40 @@ mat-card-subtitle {
   margin-bottom: 20px;
 }
 
-.button-container {
-  margin-top: 30px;
-  text-align: center;
+.full-width:last-of-type {
+  margin-bottom: 0;
 }
 
-.login-button {
-  width: 100%;
-  height: 48px;
+::ng-deep .full-width .mat-mdc-form-field-subscript-wrapper {
+  margin-top: 4px;
+}
+
+.button-container {
+  margin-top: 32px;
+  margin-bottom: 20px;
+}
+
+.button-container button {
+  height: 52px;
   font-size: 16px;
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+.button-container button:not([disabled]):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.button-container button:disabled {
+  opacity: 0.6;
 }
 
 /* Snackbar styles */
@@ -61,10 +138,66 @@ mat-card-subtitle {
 
 .cadastro-link {
   text-align: center;
-  margin-top: 16px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .cadastro-link p {
   margin: 0;
   color: rgba(0, 0, 0, 0.7);
+  font-size: 15px;
+}
+
+.cadastro-link a {
+  font-weight: 500;
+  margin-left: 4px;
+}
+
+mat-spinner {
+  display: inline-block;
+  margin: 0 auto;
+}
+
+mat-icon[matPrefix] {
+  margin-right: 12px;
+  color: rgba(0, 0, 0, 0.54);
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+  .login-container {
+    padding: 12px;
+  }
+
+  .login-card {
+    max-width: 100%;
+  }
+
+  .card-header-custom {
+    padding: 32px 20px 24px;
+  }
+
+  .header-title {
+    font-size: 28px;
+  }
+
+  .header-icon {
+    width: 60px;
+    height: 60px;
+  }
+
+  .header-icon mat-icon {
+    font-size: 36px;
+    width: 36px;
+    height: 36px;
+  }
+
+  mat-card-content {
+    padding: 28px 20px 24px !important;
+  }
+
+  .button-container {
+    margin-top: 24px;
+  }
 }

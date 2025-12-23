@@ -1,12 +1,12 @@
-<div class="cadastro-container">
+<main class="cadastro-container">
   <mat-card class="cadastro-card">
-    <mat-card-header>
-      <mat-card-title>
+    <div class="card-header-custom">
+      <div class="header-icon">
         <mat-icon>person_add</mat-icon>
-        Criar Conta
-      </mat-card-title>
-      <mat-card-subtitle>Cadastre-se no Portal Hackatom</mat-card-subtitle>
-    </mat-card-header>
+      </div>
+      <h1 class="header-title">Criar Conta</h1>
+      <p class="header-subtitle">Cadastre-se no Portal Hackatom</p>
+    </div>
 
     <mat-card-content>
       <form [formGroup]="cadastroForm" (ngSubmit)="onSubmit()">
@@ -98,4 +98,4 @@
       </form>
     </mat-card-content>
   </mat-card>
-</div>
+</main>
